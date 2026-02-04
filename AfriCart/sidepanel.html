@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AfriCart - Price Hopper</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Premium Header with Enhanced Design -->
+        <header class="app-header">
+            <div class="header-background-pattern"></div>
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon-wrapper">
+                        <div class="logo-icon">🛒</div>
+                        <div class="logo-glow"></div>
+                    </div>
+                    <div class="logo-text">
+                        <h1 class="brand-name">
+                            <span class="brand-name-main">AFRICART</span>
+                        </h1>
+                        <p class="brand-tagline">
+                            <span class="tagline-icon">💡</span>
+                            <span>Smart Price Comparison</span>
+                        </p>
+                    </div>
+                </div>
+                <button id="settingsBtn" class="header-btn" title="Settings">
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                        <path d="M11 13.75C12.5188 13.75 13.75 12.5188 13.75 11C13.75 9.48122 12.5188 8.25 11 8.25C9.48122 8.25 8.25 9.48122 8.25 11C8.25 12.5188 9.48122 13.75 11 13.75Z" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M17.4167 11C17.4167 10.6242 17.4442 10.2575 17.4808 9.9L19.4242 8.90083C19.5892 8.80917 19.6808 8.62583 19.635 8.45167L18.9017 5.84833C18.8558 5.67417 18.7 5.555 18.5167 5.555H3.48333C3.3 5.555 3.14417 5.67417 3.09833 5.84833L2.365 8.45167C2.31917 8.62583 2.41083 8.80917 2.57583 8.90083L4.51917 9.9C4.55583 10.2575 4.58333 10.6242 4.58333 11C4.58333 11.3758 4.55583 11.7425 4.51917 12.1L2.57583 13.0992C2.41083 13.1908 2.31917 13.3742 2.365 13.5483L3.09833 16.1517C3.14417 16.3258 3.3 16.445 3.48333 16.445H18.5167C18.7 16.445 18.8558 16.3258 18.9017 16.1517L19.635 13.5483C19.6808 13.3742 19.5892 13.1908 19.4242 13.0992L17.4808 12.1C17.4442 11.7425 17.4167 11.3758 17.4167 11Z" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Current Product Card - Premium Design -->
+        <div id="productCard" class="product-card" style="display: none;">
+            <div class="product-card-glow"></div>
+            <div class="product-header">
+                <div class="store-badge" id="storeBadge">
+                    <div class="store-badge-icon">
+                        <span class="store-flag" id="storeFlag">🇳🇬</span>
+                    </div>
+                    <div class="store-badge-content">
+                        <span class="store-badge-label">Current Store</span>
+                        <span class="store-name" id="storeName">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="product-image-wrapper">
+                <div class="product-image-container">
+                    <img id="productImage" class="product-image" src="" alt="Product" style="display: none;">
+                    <div class="product-image-placeholder">
+                        <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                            <path d="M32 20C26.477 20 22 24.477 22 30C22 35.523 26.477 40 32 40C37.523 40 42 35.523 42 30C42 24.477 37.523 20 32 20Z" fill="currentColor" opacity="0.2"/>
+                            <path d="M16 48C16 44.686 18.686 42 22 42H42C45.314 42 48 44.686 48 48V52H16V48Z" fill="currentColor" opacity="0.2"/>
+                        </svg>
+                    </div>
+                    <div class="product-image-overlay"></div>
+                </div>
+            </div>
+            
+            <div class="product-info">
+                <h2 class="product-title" id="productTitle">Loading product...</h2>
+                <div class="product-price-container">
+                    <div class="product-price-wrapper">
+                        <div class="price-main">
+                            <span class="product-currency" id="productCurrency">NGN</span>
+                            <span class="product-price" id="productPrice">--</span>
+                        </div>
+                        <div id="originalPriceWrapper" class="original-price-wrapper" style="display: none;">
+                            <span class="product-original-price" id="productOriginalPrice"></span>
+                            <span id="discountBadge" class="discount-badge"></span>
+                        </div>
+                    </div>
+                    <div class="price-indicator">
+                        <span class="price-label">Current Price</span>
+                        <span id="priceDropBadge" class="price-drop-badge" style="display: none;"></span>
+                    </div>
+                    <!-- Price History Indicator -->
+                    <div id="priceTrendIndicator" class="price-trend-indicator" style="display: none;">
+                        <span id="priceTrendText"></span>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions - Simplified -->
+                <div class="product-actions-simple">
+                    <button id="wishlistBtn" class="action-btn-mini" title="Add to Wishlist">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M8 14L3 9C2 8 2 6.5 3 5.5C4 4.5 5.5 4.5 6.5 5.5L8 7L9.5 5.5C10.5 4.5 12 4.5 13 5.5C14 6.5 14 8 13 9L8 14Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button id="priceHistoryBtn" class="action-btn-mini" title="Price History">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <rect x="2" y="7" width="2.5" height="7" rx="0.5" stroke="currentColor" stroke-width="1.5"/>
+                            <rect x="5.5" y="4" width="2.5" height="10" rx="0.5" stroke="currentColor" stroke-width="1.5"/>
+                            <rect x="9" y="1" width="2.5" height="13" rx="0.5" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Coupon Codes Section (Compact) -->
+                <div id="couponsSection" class="coupons-section-compact" style="display: none;">
+                    <div id="couponsList" class="coupons-list-compact"></div>
+                </div>
+                
+                <!-- Price History Display -->
+                <div id="priceHistorySection" class="price-history-section" style="display: none;">
+                    <div class="price-history-header">
+                        <span class="price-history-title">Price History</span>
+                        <button id="closeHistoryBtn" class="close-btn-small">×</button>
+                    </div>
+                    <div id="priceHistoryChart" class="price-history-chart"></div>
+                </div>
+                
+                <!-- Currency Converter -->
+                <div id="currencyConverterSection" class="currency-converter-section" style="display: none;">
+                    <div class="converter-header">
+                        <span class="converter-title">Currency Converter</span>
+                        <button id="closeConverterBtn" class="close-btn-small">×</button>
+                    </div>
+                    <div class="converter-content">
+                        <div class="converter-input-group">
+                            <input type="number" id="converterAmount" class="converter-input" placeholder="Amount" value="">
+                            <select id="converterFrom" class="converter-select"></select>
+                        </div>
+                        <div class="converter-arrow">→</div>
+                        <div class="converter-output-group">
+                            <input type="text" id="converterResult" class="converter-input" readonly>
+                            <select id="converterTo" class="converter-select"></select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Shipping Calculator -->
+                <div id="shippingSection" class="shipping-section" style="display: none;">
+                    <div class="shipping-header">
+                        <span class="shipping-title">Total Cost (with Shipping)</span>
+                    </div>
+                    <div id="shippingResults" class="shipping-results"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Not Supported Message - Enhanced -->
+        <div id="notSupportedCard" class="info-card" style="display: none;">
+            <div class="info-card-icon-wrapper">
+                <div class="info-icon">ℹ️</div>
+            </div>
+            <div class="info-content">
+                <h3 class="info-title">Store Not Supported</h3>
+                <p class="info-description">Navigate to a supported African e-commerce site to compare prices:</p>
+                <div class="supported-stores-grid">
+                    <div class="supported-store-item">
+                        <span class="store-flag-small">🇳🇬</span>
+                        <span class="store-names">Jumia, Konga, Slot</span>
+                    </div>
+                    <div class="supported-store-item">
+                        <span class="store-flag-small">🇿🇦</span>
+                        <span class="store-names">Takealot, Zando, Superbalist</span>
+                    </div>
+                    <div class="supported-store-item">
+                        <span class="store-flag-small">🇰🇪</span>
+                        <span class="store-names">Jumia, Kilimall, Amanbo</span>
+                    </div>
+                    <div class="supported-store-item">
+                        <span class="store-flag-small">🇪🇬</span>
+                        <span class="store-names">Jumia, Amazon, Noon</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Section - Simplified -->
+        <section id="comparisonSection" class="comparison-section" style="display: none;">
+            <div class="section-header-simple">
+                <h3 class="section-title-simple">Compare Prices</h3>
+            </div>
+            <div id="comparisonGrid" class="comparison-grid-simple"></div>
+        </section>
+
+        <!-- Multi-Product Comparison Section (v1.5) -->
+        <div id="multiCompareSection" class="multi-compare-section" style="display: none;">
+            <div class="section-header">
+                <div class="section-header-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <rect x="3" y="3" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+                        <rect x="14" y="3" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+                        <rect x="3" y="14" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+                        <rect x="14" y="14" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+                <div class="section-header-text">
+                    <h3 class="section-title">Multi-Product Comparison</h3>
+                    <p class="section-description">Compare up to 5 products side-by-side</p>
+                </div>
+            </div>
+            <div id="multiCompareGrid" class="multi-compare-grid"></div>
+            <button id="addToCompareBtn" class="action-btn-secondary-full">Add Current Product to Comparison</button>
+        </div>
+
+        <!-- Quick Actions - Enhanced -->
+        <div class="actions-section">
+            <button id="refreshBtn" class="action-btn">
+                <div class="action-btn-icon">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 3.33333V1.66667M10 3.33333C7.37833 3.33333 5.16667 5.545 5.16667 8.16667C5.16667 10.7883 7.37833 13 10 13M10 3.33333C12.6217 3.33333 14.8333 5.545 14.8333 8.16667M10 16.6667V18.3333M10 16.6667C12.6217 16.6667 14.8333 14.455 14.8333 11.8333C14.8333 9.21167 12.6217 7 10 7M10 16.6667C7.37833 16.6667 5.16667 14.455 5.16667 11.8333" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <span class="action-btn-text">Refresh</span>
+            </button>
+            <button id="copyLinkBtn" class="action-btn">
+                <div class="action-btn-icon">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <rect x="6.66667" y="6.66667" width="10" height="10" rx="1.33333" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M4.16667 13.3333V5C4.16667 4.53976 4.53976 4.16667 5 4.16667H11.6667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <span class="action-btn-text">Copy Link</span>
+            </button>
+        </div>
+        
+        <!-- Wishlist Section (v1.5) -->
+        <div id="wishlistSection" class="wishlist-section" style="display: none;">
+            <div class="section-header">
+                <div class="section-header-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="section-header-text">
+                    <h3 class="section-title">My Wishlist</h3>
+                    <p class="section-description">Saved products for later</p>
+                </div>
+            </div>
+            <div id="wishlistGrid" class="wishlist-grid"></div>
+        </div>
+
+        <!-- Loading State - Premium -->
+        <div id="loadingIndicator" class="loading-container" style="display: none;">
+            <div class="loading-content">
+                <div class="loading-animation">
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                </div>
+                <p class="loading-text">Analyzing product...</p>
+                <p class="loading-subtext">Extracting product details</p>
+            </div>
+        </div>
+
+        <!-- Footer - Enhanced -->
+        <footer class="app-footer">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <button id="helpBtn" class="footer-link">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M8 11.3333V8M8 4.66667H8.00667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        <span>Help</span>
+                    </button>
+                    <span class="footer-divider">•</span>
+                    <button id="statsBtn" class="footer-link">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <rect x="2" y="8" width="3" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                            <rect x="6.5" y="5" width="3" height="9" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                            <rect x="11" y="2" width="3" height="12" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                        <span>Stats</span>
+                    </button>
+                </div>
+                <div class="footer-version">
+                    <span class="version-label">v1.5.0</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="sidepanel.js"></script>
+</body>
+</html>

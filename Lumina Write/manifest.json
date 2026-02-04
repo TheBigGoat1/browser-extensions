@@ -1,0 +1,62 @@
+{
+  "manifest_version": 3,
+  "name": "Lumina Write",
+  "version": "1.0.0",
+  "description": "High-end AI Humanizer for Word Online - Transform AI text into natural, human-like writing",
+  "permissions": [
+    "sidePanel",
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "commands": {
+    "humanize": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+H",
+        "mac": "Command+Shift+H"
+      },
+      "description": "Humanize selected text"
+    },
+    "copy-humanized": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+C",
+        "mac": "Command+Shift+C"
+      },
+      "description": "Copy humanized text"
+    },
+    "replace-text": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+R",
+        "mac": "Command+Shift+R"
+      },
+      "description": "Replace original with humanized text"
+    }
+  },
+  "host_permissions": [
+    "https://*.office.com/*",
+    "https://*.office365.com/*",
+    "https://*.microsoft.com/*",
+    "https://api.deepseek.com/*"
+  ],
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "action": {
+    "default_title": "Open Lumina Write"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.office.com/*",
+        "https://*.office365.com/*",
+        "https://*.microsoft.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ]
+}

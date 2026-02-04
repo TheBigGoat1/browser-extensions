@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "Focus Flow",
+  "version": "1.0.0",
+  "description": "Removes YouTube distractions instantly",
+  "permissions": ["storage", "tabs", "notifications"],
+  "host_permissions": ["*://*.youtube.com/*"],
+  "options_page": "options.html",
+  "commands": {
+    "toggle-extension": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+F",
+        "mac": "Command+Shift+F"
+      },
+      "description": "Toggle Focus Flow on/off"
+    },
+    "toggle-sidebar": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      },
+      "description": "Toggle sidebar hiding"
+    },
+    "toggle-comments": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+C",
+        "mac": "Command+Shift+C"
+      },
+      "description": "Toggle comments hiding"
+    }
+  },
+  "content_scripts": [{
+    "matches": ["*://*.youtube.com/*"],
+    "js": ["content.js"],
+    "css": ["styles.css"],
+    "run_at": "document_end"
+  }],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Focus Flow Settings"
+  }
+}

@@ -1,0 +1,24 @@
+/* 
+ * Focus Flow - YouTube Distraction Remover
+ * Note: Most hiding is now handled by content.js for better control
+ * This CSS provides fallback hiding for elements that load very early
+ */
+
+/* Hide home page video grid (fallback - content.js handles this dynamically) */
+ytd-rich-grid-renderer[data-focus-flow-hidden="true"] {
+    display: none !important;
+}
+
+/* Hide sidebar (fallback - content.js handles this dynamically) */
+#secondary[data-focus-flow-hidden="true"],
+ytd-watch-next-secondary-results-renderer[data-focus-flow-hidden="true"],
+#related[data-focus-flow-hidden="true"] {
+    display: none !important;
+}
+
+/* Hide comments (fallback - content.js handles this dynamically) */
+#comments[data-focus-flow-hidden="true"],
+ytd-comments#comments[data-focus-flow-hidden="true"],
+#comment-teaser[data-focus-flow-hidden="true"] {
+    display: none !important;
+}

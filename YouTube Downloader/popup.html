@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Downloader Pro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📥 YouTube Downloader</h1>
+            <p class="subtitle">Download videos & audio easily</p>
+        </div>
+
+        <div id="videoInfo" class="video-info">
+            <p>Loading video info...</p>
+        </div>
+
+        <div class="section">
+            <label class="section-title">Download Service</label>
+            <select id="downloadService" class="select-input">
+                <option value="youtubepp">YouTubePP</option>
+                <option value="y2mate">Y2Mate</option>
+                <option value="savefrom">SaveFrom</option>
+            </select>
+        </div>
+
+        <div class="section">
+            <label class="section-title">Quality Preference</label>
+            <select id="downloadQuality" class="select-input">
+                <option value="best">Best Quality</option>
+                <option value="1080p">1080p</option>
+                <option value="720p">720p</option>
+                <option value="480p">480p</option>
+                <option value="360p">360p</option>
+                <option value="audio">Audio Only (MP3)</option>
+            </select>
+        </div>
+
+        <div class="button-group">
+            <button id="downloadBtn" class="btn btn-primary">
+                ⬇ Download Now
+            </button>
+            <button id="downloadAudioBtn" class="btn btn-secondary">
+                🎵 Audio Only
+            </button>
+        </div>
+
+        <div class="section">
+            <label class="section-title">Quick Actions</label>
+            <div class="quick-actions">
+                <button id="copyLinkBtn" class="btn-small">📋 Copy Link</button>
+                <button id="openServiceBtn" class="btn-small">🌐 Open Service</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <a href="#" id="optionsLink">⚙️ Settings</a>
+            <span class="version">v1.0.0</span>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cortex AI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Premium Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor"/>
+                            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <h1 class="brand-name">Cortex AI</h1>
+                        <p class="brand-tagline">Intelligence Platform</p>
+                    </div>
+                </div>
+                <button id="settingsBtn" class="header-btn" title="Settings">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 12.5C11.3807 12.5 12.5 11.3807 12.5 10C12.5 8.61929 11.3807 7.5 10 7.5C8.61929 7.5 7.5 8.61929 7.5 10C7.5 11.3807 8.61929 12.5 10 12.5Z" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M15.8333 10C15.8333 9.65833 15.8583 9.325 15.8917 9L17.6583 8.09167C17.8083 8.00833 17.8917 7.84167 17.85 7.68333L17.1833 5.31667C17.1417 5.15833 17 5.05 16.8333 5.05H3.16667C3 5.05 2.85833 5.15833 2.81667 5.31667L2.15 7.68333C2.10833 7.84167 2.19167 8.00833 2.34167 8.09167L4.10833 9C4.14167 9.325 4.16667 9.65833 4.16667 10C4.16667 10.3417 4.14167 10.675 4.10833 11L2.34167 11.9083C2.19167 11.9917 2.10833 12.1583 2.15 12.3167L2.81667 14.6833C2.85833 14.8417 3 14.95 3.16667 14.95H16.8333C17 14.95 17.1417 14.8417 17.1833 14.6833L17.85 12.3167C17.8917 12.1583 17.8083 11.9917 17.6583 11.9083L15.8917 11C15.8583 10.675 15.8333 10.3417 15.8333 10Z" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Current Page Card -->
+        <div class="page-card">
+            <div class="page-card-header">
+                <div class="page-indicator">
+                    <div class="indicator-dot"></div>
+                    <span class="indicator-text">Active Page</span>
+                </div>
+            </div>
+            <div class="page-card-body">
+                <h2 class="page-title" id="pageTitle">Initializing...</h2>
+                <p class="page-url" id="pageUrl">Loading page information</p>
+                <div class="page-stats" id="pageStats" style="display: none;">
+                    <div class="stat-item">
+                        <span class="stat-label">Content</span>
+                        <span class="stat-value" id="contentLength">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Type</span>
+                        <span class="stat-value" id="siteType">Web</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Primary Actions -->
+        <div class="actions-section">
+            <button id="summarizeBtn" class="action-btn-primary">
+                <svg class="btn-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 2.5L2.5 7.5V12.5L10 17.5L17.5 12.5V7.5L10 2.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M10 10L7.5 8.5V11.5L10 13L12.5 11.5V8.5L10 10Z" fill="currentColor"/>
+                </svg>
+                <span>Summarize</span>
+            </button>
+            <button id="analyzeBtn" class="action-btn-secondary">
+                <svg class="btn-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M10 6.5V10L12.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <span>Analyze</span>
+            </button>
+        </div>
+
+        <!-- Transform Section -->
+        <div class="section-card">
+            <div class="section-header">
+                <h3 class="section-title">Transform Content</h3>
+                <p class="section-description">Quick format conversions</p>
+            </div>
+            <div class="transform-grid">
+                <button class="transform-btn" data-format="tweet">
+                    <div class="transform-icon">🐦</div>
+                    <span class="transform-label">Tweet</span>
+                </button>
+                <button class="transform-btn" data-format="linkedin">
+                    <div class="transform-icon">💼</div>
+                    <span class="transform-label">LinkedIn</span>
+                </button>
+                <button class="transform-btn" data-format="email">
+                    <div class="transform-icon">📧</div>
+                    <span class="transform-label">Email</span>
+                </button>
+                <button class="transform-btn" data-format="el5">
+                    <div class="transform-icon">👶</div>
+                    <span class="transform-label">ELI5</span>
+                </button>
+                <button class="transform-btn" data-format="bullet">
+                    <div class="transform-icon">•</div>
+                    <span class="transform-label">Bullets</span>
+                </button>
+                <button class="transform-btn" data-format="blog">
+                    <div class="transform-icon">✍️</div>
+                    <span class="transform-label">Blog</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Custom Query Section -->
+        <div class="section-card">
+            <div class="section-header">
+                <h3 class="section-title">Custom Analysis</h3>
+                <p class="section-description">Ask anything about this page</p>
+            </div>
+            <div class="query-container">
+                <div class="query-input-wrapper">
+                    <svg class="query-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                        <circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M13 13L16 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <input type="text" id="customQuery" class="query-input" placeholder="e.g., What are the key risks and opportunities?">
+                </div>
+                <button id="queryBtn" class="query-submit-btn">
+                    <span>Ask</span>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M2 8H14M14 8L9 3M14 8L9 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingIndicator" class="loading-container" style="display: none;">
+            <div class="loading-animation">
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+            </div>
+            <p class="loading-text">Processing with AI...</p>
+            <p class="loading-subtext">This may take a few moments</p>
+        </div>
+
+        <!-- Results Display -->
+        <div id="resultsContainer" class="results-card" style="display: none;">
+            <div class="results-header">
+                <div class="results-title-section">
+                    <h2 class="results-title">Analysis Results</h2>
+                    <span class="results-badge" id="resultsBadge">AI Generated</span>
+                </div>
+                <div class="results-actions">
+                    <button id="exportBtn" class="action-icon-btn" title="Export">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                            <path d="M9 12V2M9 2L5 6M9 2L13 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 14V15C2 15.5523 2.44772 16 3 16H15C15.5523 16 16 15.5523 16 15V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                    <button id="emailBtn" class="action-icon-btn" title="Email">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                            <path d="M2 5L9 10L16 5M2 5H16M2 5V13C2 13.5523 2.44772 14 3 14H15C15.5523 14 16 13.5523 16 13V5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button id="copyBtn" class="action-icon-btn" title="Copy">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                            <rect x="6" y="6" width="10" height="10" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M4 12V4C4 3.44772 4.44772 3 5 3H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                    <button id="clearBtn" class="action-icon-btn" title="Clear">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                            <path d="M4 4L14 14M14 4L4 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div id="resultsContent" class="results-content">
+                <!-- Results stream here -->
+            </div>
+        </div>
+
+        <!-- Error Display -->
+        <div id="errorContainer" class="error-card" style="display: none;">
+            <div class="error-icon">⚠️</div>
+            <div class="error-content">
+                <h3 class="error-title">Error</h3>
+                <p class="error-message" id="errorMessage"></p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-links">
+                <button id="historyBtn" class="footer-link">History</button>
+                <span class="footer-divider">•</span>
+                <button id="helpBtn" class="footer-link">Help</button>
+            </div>
+            <div class="footer-version">v1.0.0</div>
+        </footer>
+    </div>
+
+    <!-- Export Modal -->
+    <div id="exportModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Export Results</h3>
+                <button class="modal-close" id="closeExportModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="export-options">
+                    <button class="export-option" data-format="txt">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M14 2V8H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Text File</span>
+                    </button>
+                    <button class="export-option" data-format="md">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M14 2V8H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Markdown</span>
+                    </button>
+                    <button class="export-option" data-format="pdf">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M14 2V8H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>PDF</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Modal -->
+    <div id="emailModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Send via Email</h3>
+                <button class="modal-close" id="closeEmailModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Recipient Email</label>
+                    <input type="email" id="emailRecipient" class="form-input" placeholder="recipient@example.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Subject</label>
+                    <input type="text" id="emailSubject" class="form-input" placeholder="AI Analysis Results">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message (Optional)</label>
+                    <textarea id="emailMessage" class="form-textarea" rows="3" placeholder="Add a personal message..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-secondary" id="cancelEmailBtn">Cancel</button>
+                    <button class="btn-primary" id="sendEmailBtn">Send Email</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="sidepanel.js"></script>
+</body>
+</html>

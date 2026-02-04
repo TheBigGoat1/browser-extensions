@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build / cache
+dist/
+build/
+.cache/
+*.log
+npm-debug.log*
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+*.pem
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# Archives (optional: remove these lines if you want to track zips)
+*.zip
+*.rar
+*.7z
+
+# Optional: ignore large generated folders (uncomment if needed)
+# Binance Execution Pro/server/node_modules/

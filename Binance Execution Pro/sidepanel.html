@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binance Execution Pro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header with Logo and Status -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo">
+                    <img src="binance.png" alt="Binance" class="logo-icon">
+                    <span class="logo-text">Binance Execution Pro</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="status-indicator" id="statusIndicator">
+                    <span class="status-dot" id="statusDot"></span>
+                    <span class="status-text" id="statusText">Disconnected</span>
+                </div>
+                <button class="minimize-btn" id="minimizeBtn" title="Minimize">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <div class="tab-navigation" id="tabNavigation">
+            <button class="tab-btn active" data-tab="trade" id="tabTrade">
+                <span class="tab-label">Trade</span>
+            </button>
+            <button class="tab-btn" data-tab="setup" id="tabSetup">
+                <span class="tab-label">Setup</span>
+            </button>
+        </div>
+
+        <!-- Tab Content Container -->
+        <div class="tab-content">
+            <!-- TAB 1: Tactical Trading Deck -->
+            <div class="tab-panel active" id="panelTrade">
+                <!-- Connection Status Banner -->
+                <div class="connection-banner" id="connectionBanner" style="display: none;">
+                    <div class="connection-banner-content">
+                        <span class="connection-banner-icon" id="connectionBannerIcon">⚠️</span>
+                        <div class="connection-banner-text">
+                            <strong id="connectionBannerTitle">Not Connected</strong>
+                            <span id="connectionBannerMessage">You need to set up API keys in the Setup tab to connect to Binance.</span>
+                        </div>
+                        <button class="connection-banner-action" id="connectionBannerAction" onclick="switchTab('setup')">Go to Setup</button>
+                    </div>
+                </div>
+                
+                <!-- Mode Toggles -->
+                <div class="mode-section">
+                    <div class="toggle-group">
+                        <label class="toggle-label">Market Type</label>
+                        <div class="toggle-buttons">
+                            <button class="toggle-btn" data-mode="spot" id="modeSpot">Spot</button>
+                            <button class="toggle-btn active" data-mode="futures" id="modeFutures">Futures</button>
+                        </div>
+                    </div>
+                    
+                    <div class="toggle-group" id="futuresOptions" style="display: none;">
+                        <label class="toggle-label">Margin Mode</label>
+                        <div class="toggle-buttons">
+                            <button class="toggle-btn active" data-margin="isolated" id="marginIsolated">Isolated</button>
+                            <button class="toggle-btn" data-margin="cross" id="marginCross">Cross</button>
+                        </div>
+                    </div>
+
+                    <div class="toggle-group" id="hedgeModeOption" style="display: none;">
+                        <label class="toggle-label">Position Mode</label>
+                        <div class="toggle-buttons">
+                            <button class="toggle-btn" data-hedge="one-way" id="hedgeOneWay">One-Way</button>
+                            <button class="toggle-btn active" data-hedge="hedge" id="hedgeMode">Hedge Mode</button>
+                        </div>
+                    </div>
+
+                    <div class="toggle-group">
+                        <label class="toggle-label">Order Type</label>
+                        <div class="toggle-buttons">
+                            <button class="toggle-btn active" data-ordertype="market" id="orderTypeMarket">Market</button>
+                            <button class="toggle-btn" data-ordertype="limit" id="orderTypeLimit">Limit</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trading Inputs -->
+                <div class="trading-inputs">
+                    <div class="input-group">
+                        <label class="input-label" for="symbolInput">
+                            Symbol
+                            <span class="help-icon" data-help="symbol">ℹ️</span>
+                        </label>
+                        <input type="text" 
+                               id="symbolInput" 
+                               class="input-field" 
+                               placeholder="BTCUSDT"
+                               autocomplete="off"
+                               spellcheck="false">
+                        <div class="input-hint" id="symbolHint"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="notionalInput">
+                            Notional Amount
+                            <span class="help-icon" data-help="notional">ℹ️</span>
+                        </label>
+                        <input type="number" 
+                               id="notionalInput" 
+                               class="input-field" 
+                               placeholder="25"
+                               step="0.01"
+                               min="0">
+                        <div class="input-hint" id="notionalHint"></div>
+                    </div>
+
+                    <div class="input-group" id="leverageGroup" style="display: none;">
+                        <label class="input-label" for="leverageInput">
+                            Leverage
+                            <span class="help-icon" data-help="leverage">ℹ️</span>
+                        </label>
+                        <input type="number" 
+                               id="leverageInput" 
+                               class="input-field" 
+                               placeholder="1"
+                               step="1"
+                               min="1"
+                               max="125">
+                        <div class="input-hint">1x - 125x</div>
+                        <div class="liquidation-row" id="liquidationRow">
+                            <span class="liquidation-label">Liquidation:</span>
+                            <span class="liquidation-value" id="liquidationValue">—</span>
+                        </div>
+                        <div class="input-hint" id="leverageHint"></div>
+                    </div>
+
+                    <!-- Stop Loss: Initiation + Levels + Trailing -->
+                    <div class="stop-loss-section" id="stopLossSection">
+                        <label class="section-label">Stop Loss</label>
+                        <div class="input-group">
+                            <label class="input-label" for="stopLossInput">
+                                Initiation (% from entry)
+                                <span class="help-icon" data-help="stoploss">ℹ️</span>
+                            </label>
+                            <input type="number" id="stopLossInput" class="input-field" placeholder="5" step="0.1" min="0">
+                            <div class="input-hint">e.g. 5% = stop 5% from entry</div>
+                        </div>
+                        <div class="sl-level" id="slLevel1">
+                            <span class="sl-level-title">Level 1</span>
+                            <div class="sl-level-fields">
+                                <input type="number" id="sl1Trigger" class="input-field small" placeholder="2" step="0.1" min="0" title="Trigger profit %">
+                                <span class="sl-level-sep">% profit → replace SL</span>
+                                <input type="number" id="sl1Replace" class="input-field small" placeholder="3" step="0.1" min="0" title="Replace SL % from trigger">
+                                <span class="sl-level-sep">% from trigger</span>
+                            </div>
+                        </div>
+                        <div class="sl-level" id="slLevel2">
+                            <span class="sl-level-title">Level 2</span>
+                            <div class="sl-level-fields">
+                                <input type="number" id="sl2Trigger" class="input-field small" placeholder="5" step="0.1" min="0">
+                                <span class="sl-level-sep">% profit → replace SL</span>
+                                <input type="number" id="sl2Replace" class="input-field small" placeholder="2" step="0.1" min="0">
+                                <span class="sl-level-sep">% from trigger</span>
+                            </div>
+                        </div>
+                        <div class="trailing-section">
+                            <span class="section-sublabel">Trailing Stop (0.1% increments)</span>
+                            <div class="trailing-level" id="trailLevel1">
+                                <span>L1:</span>
+                                <input type="number" id="trail1Profit" class="input-field tiny" placeholder="1" step="0.1" min="0">% profit
+                                <input type="number" id="trail1Callback" class="input-field tiny" placeholder="2" step="0.1" min="0.1">% callback
+                            </div>
+                            <div class="trailing-level" id="trailLevel2">
+                                <span>L2:</span>
+                                <input type="number" id="trail2Profit" class="input-field tiny" placeholder="4" step="0.1" min="0">% profit
+                                <input type="number" id="trail2Callback" class="input-field tiny" placeholder="1.5" step="0.1" min="0.1">% callback
+                            </div>
+                            <div class="trailing-level" id="trailLevel3">
+                                <span>L3:</span>
+                                <input type="number" id="trail3Profit" class="input-field tiny" placeholder="8" step="0.1" min="0">% profit
+                                <input type="number" id="trail3Callback" class="input-field tiny" placeholder="1" step="0.1" min="0.1">% callback
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Take Profit -->
+                    <div class="take-profit-section" id="takeProfitSection">
+                        <label class="section-label">Take Profit</label>
+                        <div class="input-group">
+                            <label class="input-label" for="tpTargetPrice">
+                                Target Price
+                                <span class="help-icon" data-help="takeprofit">ℹ️</span>
+                            </label>
+                            <input type="number" id="tpTargetPrice" class="input-field" placeholder="0" step="0.01" min="0">
+                            <div class="input-hint">Optional; 0 = no TP</div>
+                        </div>
+                        <button type="button" class="btn-secondary btn-close-trade" id="btnCloseTrade">Close Trade</button>
+                    </div>
+                </div>
+
+                <!-- Execution Buttons -->
+                <div class="execution-section">
+                    <div class="input-group" id="limitPriceGroup" style="display: none;">
+                        <label class="input-label" for="limitPriceInput">
+                            Limit Price
+                            <span class="help-icon" data-help="limitprice">ℹ️</span>
+                        </label>
+                        <input type="number" id="limitPriceInput" class="input-field" placeholder="0" step="0.01" min="0">
+                    </div>
+
+                    <div class="button-row">
+                        <button class="exec-btn exec-buy" id="btnBuy">
+                            <span class="btn-label">LONG / BUY</span>
+                            <span class="btn-subtitle" id="btnBuySubtitle">Market Order</span>
+                        </button>
+                        <button class="exec-btn exec-sell" id="btnSell">
+                            <span class="btn-label">SHORT / SELL</span>
+                            <span class="btn-subtitle" id="btnSellSubtitle">Market Order</span>
+                        </button>
+                    </div>
+                    
+                    <button class="kill-switch" id="killSwitch">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                            <path d="M8 12H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <span>CLOSE ALL POSITIONS</span>
+                    </button>
+                </div>
+
+                <!-- Real-time Info (Minimized View) -->
+                <div class="minimized-view" id="minimizedView" style="display: none;">
+                    <div class="minimized-row">
+                        <div class="minimized-item">
+                            <span class="minimized-label">SYMB</span>
+                            <span class="minimized-value" id="minSymbol">--</span>
+                        </div>
+                        <div class="minimized-item">
+                            <span class="minimized-label">QTY</span>
+                            <input type="number" class="minimized-input" id="minQty" placeholder="0.00">
+                        </div>
+                        <div class="minimized-item">
+                            <span class="minimized-label">PNL</span>
+                            <span class="minimized-value" id="minPnl">$0.00</span>
+                        </div>
+                    </div>
+                    <div class="button-row minimized">
+                        <button class="exec-btn exec-buy" id="minBtnBuy">BUY</button>
+                        <button class="exec-btn exec-sell" id="minBtnSell">SELL</button>
+                    </div>
+                </div>
+
+                <!-- Position Info -->
+                <div class="position-info" id="positionInfo" style="display: none;">
+                    <div class="position-header">
+                        <span class="position-title">Active Position</span>
+                        <button class="close-position" id="closePosition">Close</button>
+                    </div>
+                    <div class="position-details">
+                        <div class="position-item">
+                            <span class="position-label">Entry</span>
+                            <span class="position-value" id="positionEntry">--</span>
+                        </div>
+                        <div class="position-item">
+                            <span class="position-label">Current</span>
+                            <span class="position-value" id="positionCurrent">--</span>
+                        </div>
+                        <div class="position-item">
+                            <span class="position-label">PnL</span>
+                            <span class="position-value" id="positionPnl">--</span>
+                        </div>
+                        <div class="position-item">
+                            <span class="position-label">Stop Loss</span>
+                            <span class="position-value" id="positionStopLoss">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: Command & Control Center -->
+            <div class="tab-panel" id="panelSetup">
+                <!-- Legal Disclaimer -->
+                <div class="disclaimer-section">
+                    <div class="disclaimer-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h3>Legal Disclaimer</h3>
+                    </div>
+                    <div class="disclaimer-content" id="disclaimerContent">
+                        <p><strong>IMPORTANT: READ CAREFULLY</strong></p>
+                        <p>This extension provides direct access to Binance trading APIs. By using this software, you acknowledge and agree to the following:</p>
+                        <ul>
+                            <li>Trading cryptocurrencies involves substantial risk of loss</li>
+                            <li>You are solely responsible for all trading decisions and their consequences</li>
+                            <li><strong>Real trading:</strong> You accept the risk of real-money trading. We are not liable for any losses, damages, or claims arising from your use of this extension or connection to live accounts</li>
+                            <li>Past performance does not guarantee future results</li>
+                            <li>You must comply with all applicable laws and regulations in your jurisdiction</li>
+                            <li>The developers are not responsible for any financial losses</li>
+                            <li>API keys are stored encrypted but you are responsible for their security</li>
+                            <li>This software is provided "as-is" without warranties</li>
+                        </ul>
+                        <p><strong>By proceeding, you confirm that you have read, understood, and agree to these terms.</strong></p>
+                    </div>
+                    <label class="disclaimer-checkbox">
+                        <input type="checkbox" id="disclaimerAccepted">
+                        <span>I have read and agree to the terms above</span>
+                    </label>
+                </div>
+
+                <!-- Vault Setup -->
+                <div class="vault-section" id="vaultSection" style="display: none;">
+                    <div class="section-header">
+                        <h3>Security Vault</h3>
+                        <p class="section-subtitle">Set up your master password to encrypt API keys</p>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label" for="masterPassword">
+                            Master Password
+                            <span class="help-icon" data-help="masterpass">ℹ️</span>
+                        </label>
+                        <input type="password" 
+                               id="masterPassword" 
+                               class="input-field" 
+                               placeholder="Create a strong password"
+                               autocomplete="new-password">
+                        <div class="password-strength" id="passwordStrength"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="confirmPassword">Confirm Password</label>
+                        <input type="password" 
+                               id="confirmPassword" 
+                               class="input-field" 
+                               placeholder="Re-enter password"
+                               autocomplete="new-password">
+                    </div>
+
+                    <button class="btn-primary" id="setupVaultBtn" disabled>Setup Vault</button>
+                </div>
+
+                <!-- Paper vs Real Toggle -->
+                <div class="profiles-section" id="profilesSection" style="display: none;">
+                    <div class="section-header">
+                        <h3>Connection Profiles</h3>
+                        <span class="profile-limit" id="profileLimitHint">Up to 5 profiles</span>
+                        <button class="btn-secondary" id="addProfileBtn">+ Add Profile</button>
+                    </div>
+                    <p class="paper-real-note">Paper = Binance Testnet (free). Real = live funds; paid subscription required when enabled.</p>
+
+                    <div class="profile-selector" id="profileSelector">
+                        <!-- Profiles will be dynamically added -->
+                    </div>
+
+                    <div class="profile-form" id="profileForm" style="display: none;">
+                        <div class="input-group">
+                            <label class="input-label" for="profileName">Profile Name</label>
+                            <input type="text" 
+                                   id="profileName" 
+                                   class="input-field" 
+                                   placeholder="Main Account">
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Environment (for this profile)</label>
+                            <div class="toggle-buttons">
+                                <button class="toggle-btn active" data-env="testnet" id="envTestnet">Paper (Testnet)</button>
+                                <button class="toggle-btn" data-env="mainnet" id="envMainnet">Real (Mainnet)</button>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label" for="apiKey">
+                                API Key
+                                <span class="help-icon" data-help="apikey">ℹ️</span>
+                            </label>
+                            <input type="text" 
+                                   id="apiKey" 
+                                   class="input-field" 
+                                   placeholder="Your Binance API Key"
+                                   autocomplete="off"
+                                   spellcheck="false">
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label" for="apiSecret">
+                                API Secret
+                                <span class="help-icon" data-help="apisecret">ℹ️</span>
+                            </label>
+                            <input type="password" 
+                                   id="apiSecret" 
+                                   class="input-field" 
+                                   placeholder="Your Binance API Secret"
+                                   autocomplete="off"
+                                   spellcheck="false">
+                        </div>
+
+                        <div class="form-actions">
+                            <button class="btn-secondary" id="cancelProfileBtn">Cancel</button>
+                            <button class="btn-primary" id="saveProfileBtn">Save Profile</button>
+                        </div>
+                    </div>
+
+                    <!-- API Key Instructions -->
+                    <div class="instructions-card">
+                        <div class="instructions-header">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="2"/>
+                                <path d="M10 6V10M10 14H10.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            <h4>How to Get API Keys</h4>
+                        </div>
+                        <ol class="instructions-list">
+                            <li>Log in to Binance (or <a href="https://testnet.binance.vision" target="_blank">Testnet</a> for Paper).</li>
+                            <li>Go to API Management: <a href="https://www.binance.com/en/my/settings/api-management" target="_blank">Binance API Management</a> (Testnet: Profile → API Management).</li>
+                            <li><strong>System generated</strong> — Choose “Create API” → “System generated”.</li>
+                            <li><strong>Secret only shows once</strong> — Copy and save the Secret immediately; Binance will not show it again.</li>
+                            <li>API restrictions (recommended): <strong>Enable Reading</strong>, <strong>Enable Spot &amp; Margin Trading</strong>, <strong>Enable Futures</strong>. Do <strong>not</strong> enable Withdrawals.</li>
+                            <li>Paste API Key and Secret above. Values are kept when you click out to copy (session draft).</li>
+                        </ol>
+                    </div>
+
+                    <!-- Parameter Definitions (Tab 2) -->
+                    <div class="definitions-card">
+                        <div class="instructions-header">
+                            <h4>Parameter definitions &amp; limits</h4>
+                        </div>
+                        <ul class="definitions-list">
+                            <li><strong>Symbol</strong> — Trading pair (e.g. BTCUSDT). Must exist on Binance; invalid pair shows red.</li>
+                            <li><strong>Notional</strong> — Order size in quote currency. Minimum per pair (e.g. $5).</li>
+                            <li><strong>Leverage</strong> — 1–125; max depends on symbol. Wrong leverage for pair shows red. Liquidation % = 100 ÷ leverage.</li>
+                            <li><strong>Callback rate</strong> — Binance accepts only 0.1% increments (0.1, 0.2, 0.3…). 0.15% will error; use 0.1 or 0.2.</li>
+                            <li><strong>Stop loss / Trailing</strong> — Initiation % from entry; levels move SL at profit triggers. Trailing: profit_pct and callback_rate_pct in 0.1% steps.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Payment Section (if needed) -->
+                <div class="payment-section" id="paymentSection" style="display: none;">
+                    <div class="section-header">
+                        <h3>Activate Mainnet</h3>
+                        <p class="section-subtitle">Unlock full trading capabilities</p>
+                    </div>
+                    <button class="btn-primary" id="payNowBtn">Pay Now</button>
+                </div>
+
+                <!-- Session Audit Log -->
+                <div class="audit-log-section" id="auditLogSection">
+                    <div class="section-header">
+                        <h3>Session Audit Log</h3>
+                        <div class="section-actions">
+                            <button class="btn-secondary" id="clearLogBtn">Clear Log</button>
+                            <button class="btn-secondary" id="refreshLogBtn">Refresh</button>
+                        </div>
+                    </div>
+                    <p class="section-subtitle">Last 100 requests/responses (sanitized, no secrets)</p>
+                    <div class="audit-log-container" id="auditLogContainer">
+                        <div class="audit-log-empty">No log entries yet. Trading activity will appear here.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Tooltip -->
+        <div class="help-tooltip" id="helpTooltip" style="display: none;">
+            <div class="tooltip-content" id="tooltipContent"></div>
+        </div>
+    </div>
+
+    <script src="security.js"></script>
+    <script src="binance-signer.js"></script>
+    <script src="binance-validator.js"></script>
+    <script src="binance-websocket.js"></script>
+    <script src="trailing-stop.js"></script>
+    <script src="error-handler.js"></script>
+    <script src="audit-log.js"></script>
+    <script src="license-manager.js"></script>
+    <script src="sidepanel.js"></script>
+</body>
+</html>

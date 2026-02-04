@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <!-- Settings Icon -->
+  <symbol id="icon-settings" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94L14.4 2.81c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+  </symbol>
+  
+  <!-- Close Icon -->
+  <symbol id="icon-close" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+  </symbol>
+  
+  <!-- Edit Icon -->
+  <symbol id="icon-edit" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+  </symbol>
+  
+  <!-- Play Icon -->
+  <symbol id="icon-play" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M8 5v14l11-7z"/>
+  </symbol>
+  
+  <!-- Delete Icon -->
+  <symbol id="icon-delete" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+  </symbol>
+  
+  <!-- Element Icon -->
+  <symbol id="icon-element" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+  </symbol>
+  
+  <!-- Text Icon -->
+  <symbol id="icon-text" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M2.5 4v3h5v12h3V7h5V4h-13zm19 5h-9v3h3v7h3v-7h3V9z"/>
+  </symbol>
+  
+  <!-- Link Icon -->
+  <symbol id="icon-link" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+  </symbol>
+  
+  <!-- Image Icon -->
+  <symbol id="icon-image" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+  </symbol>
+  
+  <!-- Table Icon -->
+  <symbol id="icon-table" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M3 9h18V7H3v2zm0 4h18v-2H3v2zm0 4h18v-2H3v2zm16 0h2v-2h-2v2zm0-10v2h2V7h-2zm-16 0h2V5H3v2zm16 0V5h2v2h-2z"/>
+  </symbol>
+  
+  <!-- Add Icon -->
+  <symbol id="icon-add" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+  </symbol>
+</svg>

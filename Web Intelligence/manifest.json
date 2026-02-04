@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "Cortex AI",
+  "version": "1.0.0",
+  "description": "Enterprise-grade AI intelligence platform. Transform any content into actionable insights with advanced AI analysis.",
+  "permissions": [
+    "storage",
+    "tabs",
+    "sidePanel",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "*://*.youtube.com/*",
+    "*://*.github.com/*",
+    "*://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "options_page": "options.html",
+  "action": {
+    "default_title": "Open Cortex AI",
+    "default_icon": {
+      "16": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggMEMzLjU4IDAgMCAzLjU4IDAgOFMzLjU4IDE2IDggMTZTMTYgMTIuNDIgMTYgOFMxMi40MiAwIDggMFoiIGZpbGw9IiM2MzY2RjEiLz4KPHBhdGggZD0iTTggNEM2LjkgNCA2IDQuOSA2IDZINEM0IDMuNzkgNS43OSAyIDggMlMxMiAzLjc5IDEyIDZIMTBDMTAgNC45IDkuMSA0IDggNFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPg=="
+    }
+  },
+  "commands": {
+    "toggle-sidepanel": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+I",
+        "mac": "Command+Shift+I"
+      },
+      "description": "Toggle Cortex AI Side Panel"
+    }
+  }
+}

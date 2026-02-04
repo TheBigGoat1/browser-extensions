@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Flow Extension</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            width: 320px;
+            padding: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            background: #f8f9fa;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            color: #ff0000;
+            font-weight: 700;
+            font-size: 20px;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            color: #606060;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .toggle-section {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .toggle-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .toggle-item:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-label {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .toggle-name {
+            font-weight: 500;
+            font-size: 14px;
+            color: #030303;
+            margin-bottom: 2px;
+        }
+
+        .toggle-desc {
+            font-size: 12px;
+            color: #606060;
+        }
+
+        .switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            margin-left: 12px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #ff0000;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .status {
+            text-align: center;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-top: 12px;
+            font-weight: 500;
+        }
+
+        .status.active {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status.inactive {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 11px;
+            color: #909090;
+        }
+
+        .channel-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 8px;
+            box-sizing: border-box;
+        }
+
+        .channel-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .channel-btn {
+            flex: 1;
+            padding: 6px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .channel-btn:hover {
+            opacity: 0.9;
+        }
+
+        .channel-btn.whitelist {
+            background: #4caf50;
+            color: white;
+        }
+
+        .channel-btn.blacklist {
+            background: #f44336;
+            color: white;
+        }
+
+        .channel-lists {
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 11px;
+        }
+
+        .channel-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 8px;
+            margin-bottom: 4px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .channel-item .remove {
+            background: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 2px 6px;
+            cursor: pointer;
+            font-size: 10px;
+        }
+
+        .channel-label {
+            font-weight: 500;
+            font-size: 11px;
+            color: #030303;
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="title">FOCUS FLOW</div>
+        <div class="subtitle">Remove YouTube distractions</div>
+    </div>
+
+    <div class="toggle-section">
+        <div class="toggle-item">
+            <label class="toggle-label">
+                <span class="toggle-name">Enable Extension</span>
+                <span class="toggle-desc">Master switch for all features</span>
+            </label>
+            <label class="switch">
+                <input type="checkbox" id="toggleEnabled">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="toggle-section">
+        <div class="toggle-item">
+            <label class="toggle-label">
+                <span class="toggle-name">Hide Sidebar</span>
+                <span class="toggle-desc">Remove recommended videos</span>
+            </label>
+            <label class="switch">
+                <input type="checkbox" id="toggleSidebar">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="toggle-item">
+            <label class="toggle-label">
+                <span class="toggle-name">Hide Comments</span>
+                <span class="toggle-desc">Remove comment section</span>
+            </label>
+            <label class="switch">
+                <input type="checkbox" id="toggleComments">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="toggle-item">
+            <label class="toggle-label">
+                <span class="toggle-name">Hide Home Grid</span>
+                <span class="toggle-desc">Remove video grid on homepage</span>
+            </label>
+            <label class="switch">
+                <input type="checkbox" id="toggleHomeGrid">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="toggle-section">
+        <div class="channel-label">Channel Management</div>
+        <input type="text" id="channelInput" class="channel-input" placeholder="Channel name or URL">
+        <div class="channel-buttons">
+            <button id="addWhitelist" class="channel-btn whitelist">+ Whitelist</button>
+            <button id="addBlacklist" class="channel-btn blacklist">+ Blacklist</button>
+        </div>
+        <div class="channel-lists" id="channelLists">
+            <div id="whitelistDisplay" style="margin-bottom: 8px;"></div>
+            <div id="blacklistDisplay"></div>
+        </div>
+    </div>
+
+    <div class="status" id="status">Loading...</div>
+
+    <div class="footer">
+        Refresh YouTube page to see changes
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>

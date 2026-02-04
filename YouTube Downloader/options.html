@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Downloader Pro - Settings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+            padding: 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #f00;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #606060;
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+
+        .section {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #030303;
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #030303;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .button {
+            background: #f00;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .button:hover {
+            background: #cc0000;
+        }
+
+        .button.secondary {
+            background: #606060;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: #1565c0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📥 YouTube Downloader Pro</h1>
+        <div class="subtitle">Settings & Configuration</div>
+
+        <div class="section">
+            <div class="section-title">Default Download Service</div>
+            <label for="defaultService">Choose your preferred download service:</label>
+            <select id="defaultService">
+                <option value="youtubepp">YouTubePP (Recommended)</option>
+                <option value="y2mate">Y2Mate</option>
+                <option value="savefrom">SaveFrom</option>
+            </select>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Default Quality</div>
+            <label for="defaultQuality">Default download quality:</label>
+            <select id="defaultQuality">
+                <option value="best">Best Available</option>
+                <option value="1080p">1080p</option>
+                <option value="720p">720p</option>
+                <option value="480p">480p</option>
+                <option value="360p">360p</option>
+                <option value="audio">Audio Only (MP3)</option>
+            </select>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Keyboard Shortcuts</div>
+            <div class="info-box">
+                <strong>Quick Download:</strong> Ctrl+Shift+D (Mac: Cmd+Shift+D)<br>
+                Customize at: <strong>chrome://extensions/shortcuts</strong>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Reset Settings</div>
+            <button class="button secondary" id="resetBtn">Reset to Defaults</button>
+        </div>
+    </div>
+
+    <script src="options.js"></script>
+</body>
+</html>

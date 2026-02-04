@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Downloader Pro",
+  "version": "1.0.0",
+  "description": "Download YouTube videos, audio, and more with advanced features",
+  "permissions": ["storage", "tabs", "activeTab", "downloads"],
+  "host_permissions": ["*://*.youtube.com/*"],
+  "options_page": "options.html",
+  "content_scripts": [{
+    "matches": ["*://*.youtube.com/*"],
+    "js": ["content.js"],
+    "css": ["styles.css"],
+    "run_at": "document_end"
+  }],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "YouTube Downloader"
+  },
+  "commands": {
+    "quick-download": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+D",
+        "mac": "Command+Shift+D"
+      },
+      "description": "Quick download current video"
+    }
+  }
+}

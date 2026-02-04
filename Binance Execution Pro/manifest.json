@@ -1,0 +1,64 @@
+{
+  "manifest_version": 3,
+  "name": "Binance Execution Pro",
+  "version": "1.0.0",
+  "description": "High-frequency trading extension with sub-250ms execution and military-grade security",
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "activeTab",
+    "background"
+  ],
+  "host_permissions": [
+    "https://api.binance.com/*",
+    "https://testnet.binance.vision/*",
+    "https://testnet.binancefuture.com/*",
+    "https://fapi.binance.com/*",
+    "https://dapi.binance.com/*",
+    "wss://stream.binance.com/*",
+    "wss://testnet.binance.vision/*",
+    "wss://testnet.binancefuture.com/*",
+    "wss://fstream.binance.com/*",
+    "wss://dstream.binance.com/*",
+    "https://your-license-server.example/*",
+    "http://localhost:8787/*"
+  ],
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+    "background": {
+      "service_worker": "background.js"
+    },
+  "action": {
+    "default_title": "Binance Execution Pro",
+    "default_icon": {
+      "16": "binance.png",
+      "48": "binance.png",
+      "128": "binance.png"
+    }
+  },
+  "icons": {
+    "16": "binance.png",
+    "48": "binance.png",
+    "128": "binance.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "commands": {
+    "execute-buy": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+B",
+        "mac": "Command+Shift+B"
+      },
+      "description": "Execute Buy Order"
+    },
+    "execute-sell": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      },
+      "description": "Execute Sell Order"
+    }
+  }
+}
