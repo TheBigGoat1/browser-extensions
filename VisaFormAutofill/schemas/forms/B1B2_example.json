@@ -1,0 +1,99 @@
+{
+  "visa_category": "B1B2",
+  "version": "1.0",
+  "steps": [
+    {
+      "id": "personal",
+      "title": "Personal Information",
+      "fields": [
+        {
+          "id": "full_name",
+          "type": "text",
+          "label": "Full name as on passport",
+          "required": true,
+          "validation_rules": { "min_length": 2, "max_length": 200 }
+        },
+        {
+          "id": "date_of_birth",
+          "type": "date",
+          "label": "Date of birth",
+          "required": true
+        },
+        {
+          "id": "nationality",
+          "type": "select",
+          "label": "Nationality",
+          "required": true,
+          "options": "ISO_COUNTRY_CODES"
+        },
+        {
+          "id": "passport_number",
+          "type": "text",
+          "label": "Passport number",
+          "required": true
+        },
+        {
+          "id": "passport_expiry",
+          "type": "date",
+          "label": "Passport expiry date",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "trip",
+      "title": "Trip Details",
+      "fields": [
+        {
+          "id": "purpose_of_trip",
+          "type": "select",
+          "label": "Purpose of trip",
+          "required": true,
+          "options": [
+            { "value": "business", "label": "Business" },
+            { "value": "tourism", "label": "Tourism" },
+            { "value": "both", "label": "Business and Tourism" }
+          ]
+        },
+        {
+          "id": "intended_dates",
+          "type": "text",
+          "label": "Intended travel dates",
+          "required": true
+        },
+        {
+          "id": "has_dependents",
+          "type": "checkbox",
+          "label": "Traveling with dependents?",
+          "required": false
+        },
+        {
+          "id": "dependent_names",
+          "type": "text",
+          "label": "Names of dependents",
+          "required_if": { "field": "has_dependents", "op": "eq", "value": true },
+          "show_if": { "field": "has_dependents", "op": "eq", "value": true }
+        }
+      ]
+    },
+    {
+      "id": "history",
+      "title": "Travel History",
+      "fields": [
+        {
+          "id": "previous_visa_refusals",
+          "type": "checkbox",
+          "label": "Have you ever been refused a US visa?",
+          "required": true
+        },
+        {
+          "id": "refusal_details",
+          "type": "textarea",
+          "label": "Details of refusal",
+          "show_if": { "field": "previous_visa_refusals", "op": "eq", "value": true },
+          "required_if": { "field": "previous_visa_refusals", "op": "eq", "value": true }
+        }
+      ]
+    }
+  ]
+}

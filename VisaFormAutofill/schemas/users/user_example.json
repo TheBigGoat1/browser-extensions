@@ -1,0 +1,10 @@
+{
+  "id": "user_001",
+  "email": "applicant@example.com",
+  "password_hash": "<bcrypt_or_argon2_hash>",
+  "role": "client",
+  "organization_id": "org_xyz",
+  "name": "Jane Applicant",
+  "created_at": "2025-01-15T10:00:00Z",
+  "updated_at": "2025-01-15T10:00:00Z"
+}

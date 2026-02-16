@@ -1,0 +1,16 @@
+{
+  "id": "doc_001",
+  "application_id": "app_001",
+  "organization_id": "org_xyz",
+  "type": "passport",
+  "file_path": "org_xyz/doc_001_passport.pdf",
+  "file_name_original": "passport_scan.pdf",
+  "ocr_text": "",
+  "compliance": {
+    "status": "pass",
+    "checked_at": "2025-01-16T09:00:00Z",
+    "issues": []
+  },
+  "created_at": "2025-01-15T11:00:00Z",
+  "updated_at": "2025-01-16T09:00:00Z"
+}

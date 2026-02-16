@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "Visa Form Autofill",
+  "version": "1.0.0",
+  "description": "Autofill visa application forms from structured portal data. Authenticates with backend, fetches application JSON, and fills official visa site forms step-by-step.",
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "http://localhost:*/*",
+    "https://*/api/*"
+  ],
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Visa Form Autofill — Open Panel",
+    "default_icon": {
+      "16": "images.png",
+      "48": "images.png",
+      "128": "images.png"
+    }
+  },
+  "icons": {
+    "16": "images.png",
+    "48": "images.png",
+    "128": "images.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

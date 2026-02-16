@@ -5,23 +5,14 @@
     "action": {
       "type": "modifyHeaders",
       "responseHeaders": [
-        {
-          "header": "x-frame-options",
-          "operation": "remove"
-        },
-        {
-          "header": "content-security-policy",
-          "operation": "remove"
-        },
-        {
-          "header": "frame-options",
-          "operation": "remove"
-        }
+        { "header": "x-frame-options", "operation": "remove" },
+        { "header": "content-security-policy", "operation": "remove" },
+        { "header": "frame-options", "operation": "remove" }
       ]
     },
     "condition": {
       "resourceTypes": ["sub_frame", "main_frame"],
-      "urlFilter": "*chatgpt.com/*"
+      "urlFilter": "*chatgpt.com*"
     }
   },
   {
@@ -30,23 +21,14 @@
     "action": {
       "type": "modifyHeaders",
       "responseHeaders": [
-        {
-          "header": "x-frame-options",
-          "operation": "remove"
-        },
-        {
-          "header": "content-security-policy",
-          "operation": "remove"
-        },
-        {
-          "header": "frame-options",
-          "operation": "remove"
-        }
+        { "header": "x-frame-options", "operation": "remove" },
+        { "header": "content-security-policy", "operation": "remove" },
+        { "header": "frame-options", "operation": "remove" }
       ]
     },
     "condition": {
       "resourceTypes": ["sub_frame", "main_frame"],
-      "urlFilter": "*claude.ai/*"
+      "urlFilter": "*claude.ai*"
     }
   },
   {
@@ -55,23 +37,30 @@
     "action": {
       "type": "modifyHeaders",
       "responseHeaders": [
-        {
-          "header": "x-frame-options",
-          "operation": "remove"
-        },
-        {
-          "header": "content-security-policy",
-          "operation": "remove"
-        },
-        {
-          "header": "frame-options",
-          "operation": "remove"
-        }
+        { "header": "x-frame-options", "operation": "remove" },
+        { "header": "content-security-policy", "operation": "remove" },
+        { "header": "frame-options", "operation": "remove" }
       ]
     },
     "condition": {
       "resourceTypes": ["sub_frame", "main_frame"],
-      "urlFilter": "*deepseek.com/*"
+      "urlFilter": "*deepseek.com*"
+    }
+  },
+  {
+    "id": 4,
+    "priority": 1,
+    "action": {
+      "type": "modifyHeaders",
+      "responseHeaders": [
+        { "header": "x-frame-options", "operation": "remove" },
+        { "header": "content-security-policy", "operation": "remove" },
+        { "header": "frame-options", "operation": "remove" }
+      ]
+    },
+    "condition": {
+      "resourceTypes": ["sub_frame", "main_frame"],
+      "urlFilter": "*gemini.google.com*"
     }
   },
   {
@@ -80,23 +69,14 @@
     "action": {
       "type": "modifyHeaders",
       "responseHeaders": [
-        {
-          "header": "x-frame-options",
-          "operation": "remove"
-        },
-        {
-          "header": "content-security-policy",
-          "operation": "remove"
-        },
-        {
-          "header": "frame-options",
-          "operation": "remove"
-        }
+        { "header": "x-frame-options", "operation": "remove" },
+        { "header": "content-security-policy", "operation": "remove" },
+        { "header": "frame-options", "operation": "remove" }
       ]
     },
     "condition": {
       "resourceTypes": ["sub_frame", "main_frame"],
-      "urlFilter": "*gemini.google.com/*"
+      "urlFilter": "*github.com*"
     }
   },
   {
@@ -105,48 +85,30 @@
     "action": {
       "type": "modifyHeaders",
       "responseHeaders": [
-        {
-          "header": "x-frame-options",
-          "operation": "remove"
-        },
-        {
-          "header": "content-security-policy",
-          "operation": "remove"
-        },
-        {
-          "header": "frame-options",
-          "operation": "remove"
-        }
+        { "header": "x-frame-options", "operation": "remove" },
+        { "header": "content-security-policy", "operation": "remove" },
+        { "header": "frame-options", "operation": "remove" }
       ]
     },
     "condition": {
       "resourceTypes": ["sub_frame", "main_frame"],
-      "urlFilter": "*github.com/*"
+      "urlFilter": "*word.cloud.microsoft*"
     }
   },
   {
-    "id": 8,
+    "id": 7,
     "priority": 1,
     "action": {
       "type": "modifyHeaders",
       "responseHeaders": [
-        {
-          "header": "x-frame-options",
-          "operation": "remove"
-        },
-        {
-          "header": "content-security-policy",
-          "operation": "remove"
-        },
-        {
-          "header": "frame-options",
-          "operation": "remove"
-        }
+        { "header": "x-frame-options", "operation": "remove" },
+        { "header": "content-security-policy", "operation": "remove" },
+        { "header": "frame-options", "operation": "remove" }
       ]
     },
     "condition": {
       "resourceTypes": ["sub_frame", "main_frame"],
-      "urlFilter": "*word.cloud.microsoft.com/*"
+      "urlFilter": "*office.com*"
     }
   }
 ]

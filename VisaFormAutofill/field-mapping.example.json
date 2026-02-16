@@ -1,0 +1,25 @@
+{
+  "description": "Copy to field-mapping.json and adjust selectors for your target visa site. Keys must match form_answers and applicant keys in application JSON.",
+  "site_pattern": "https://example-visa-site.com/form/*",
+  "pages": [
+    {
+      "url_pattern": "/personal",
+      "fields": {
+        "full_name": "input[name='fullName']",
+        "date_of_birth": "input[name='dob']",
+        "nationality": "select[name='nationality']",
+        "passport_number": "input[name='passportNumber']",
+        "passport_expiry": "input[name='passportExpiry']"
+      }
+    },
+    {
+      "url_pattern": "/trip",
+      "fields": {
+        "purpose_of_trip": "select[name='purpose']",
+        "intended_dates": "input[name='travelDates']",
+        "has_dependents": "input[name='hasDependents']",
+        "dependent_names": "textarea[name='dependentNames']"
+      }
+    }
+  ]
+}

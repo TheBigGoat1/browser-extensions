@@ -1,0 +1,13 @@
+{
+  "id": "audit_001",
+  "timestamp": "2025-01-15T10:05:00Z",
+  "actor_id": "user_001",
+  "action": "application.update",
+  "resource_type": "application",
+  "resource_id": "app_001",
+  "organization_id": "org_xyz",
+  "details": {
+    "ip": "192.168.1.1",
+    "user_agent": "Mozilla/5.0..."
+  }
+}

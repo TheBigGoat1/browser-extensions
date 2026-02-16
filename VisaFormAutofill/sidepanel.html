@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a1f71" />
+  <title>Visa Form Autofill</title>
+  <link rel="stylesheet" href="sidepanel.css" />
+</head>
+<body>
+  <div class="main-container" role="main">
+    <header class="header" role="banner">
+      <div class="header__brand">
+        <img class="header__icon" src="images.png" alt="" width="40" height="40" decoding="async" />
+        <div>
+          <h1>Visa Form Autofill</h1>
+          <p class="subtitle">Fill visa forms from your portal data</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="section config" id="section-config" aria-labelledby="config-title">
+      <h2 id="config-title" class="section__title">Configuration</h2>
+      <div class="form-group">
+        <label for="apiBase">
+          <span>API base URL</span>
+          <input type="url" id="apiBase" class="input" placeholder="https://your-backend.com" autocomplete="url" />
+        </label>
+        <label for="token">
+          <span>Auth token (optional)</span>
+          <input type="password" id="token" class="input" placeholder="Bearer token if required" autocomplete="off" />
+        </label>
+        <button type="button" id="saveConfig" class="btn">Save configuration</button>
+      </div>
+      <p class="hint" id="configStatus" aria-live="polite" aria-atomic="true"></p>
+    </section>
+
+    <section class="section auth" id="section-auth" aria-labelledby="app-title">
+      <h2 id="app-title" class="section__title">Application</h2>
+      <div class="form-group">
+        <label for="applicationId">
+          <span>Application ID</span>
+          <input type="text" id="applicationId" class="input" placeholder="e.g. app_001" autocomplete="off" />
+        </label>
+        <button type="button" id="fetchApp" class="btn">Fetch application</button>
+      </div>
+      <p class="hint" id="fetchStatus" aria-live="polite" aria-atomic="true"></p>
+      <div id="appPreview" class="app-preview hidden" aria-label="Application data preview"></div>
+    </section>
+
+    <section class="section section--fill fill" id="section-fill" aria-labelledby="fill-title">
+      <h2 id="fill-title" class="section__title">Autofill</h2>
+      <p class="section__description">Open the visa form page in this tab, then click below to fill the current page from the loaded application.</p>
+      <div class="form-group">
+        <button type="button" id="fillPage" class="btn" disabled aria-disabled="true" aria-describedby="fillStatus">
+          Fill current page
+        </button>
+      </div>
+      <p class="hint" id="fillStatus" aria-live="polite" aria-atomic="true"></p>
+    </section>
+
+    <footer class="footer" role="contentinfo">
+      <p>Step-by-step: fill page → submit on site → next page → fill again. Final submit is manual.</p>
+    </footer>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>

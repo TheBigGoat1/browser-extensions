@@ -26,19 +26,27 @@ Follow these steps to move your Browser extension projects (including Binance Ex
 5. **Do not** check "Add a README", "Add .gitignore", or "Choose a license" — you already have files.  
 6. Click **Create repository**.
 
-### Step 2: Initialize Git locally (if not done yet)
+### Step 2: Set your Git identity (one-time on this PC)
 
-In PowerShell, run:
+If you haven’t set Git user name/email before, run (use your real name and GitHub email):
+
+```powershell
+git config --global user.name "Your Name"
+git config --global user.email "your-email@example.com"
+```
+
+### Step 3: Initialize Git locally (if not done yet)
+
+Git is already initialized in this folder. In PowerShell, run:
 
 ```powershell
 cd "c:\Users\okeke\OneDrive\Desktop\PROGRAMS\Browser extension"
 
-git init
 git add .
 git commit -m "Initial commit: Browser extensions (Binance Execution Pro, AfriCart, etc.)"
 ```
 
-### Step 3: Connect to GitHub and push
+### Step 4: Connect to GitHub and push
 
 Replace `YOUR_USERNAME` and `YOUR_REPO_NAME` with your GitHub username and the repo name you chose (e.g. `browser-extensions`):
 
@@ -64,7 +72,14 @@ If you want a **separate repo** just for the Binance extension:
 3. Leave "Add README" etc. **unchecked**.  
 4. Click **Create repository**.
 
-### Step 2: Initialize Git inside Binance Execution Pro
+### Step 2: Set Git identity (if not done)
+
+```powershell
+git config --global user.name "Your Name"
+git config --global user.email "your-email@example.com"
+```
+
+### Step 3: Initialize Git inside Binance Execution Pro
 
 ```powershell
 cd "c:\Users\okeke\OneDrive\Desktop\PROGRAMS\Browser extension\Binance Execution Pro"
@@ -74,7 +89,7 @@ git add .
 git commit -m "Initial commit: Binance Execution Pro Chrome extension"
 ```
 
-### Step 3: Add remote and push
+### Step 4: Add remote and push
 
 Replace `YOUR_USERNAME` and `binance-execution-pro` with your details:
 
@@ -107,8 +122,9 @@ git push -u origin main
 
 | Step | Command |
 |------|--------|
+| 0. Set identity (once per PC) | `git config --global user.name "Your Name"` and `git config --global user.email "you@example.com"` |
 | 1. Go to folder | `cd "c:\Users\okeke\OneDrive\Desktop\PROGRAMS\Browser extension"` |
-| 2. Init + first commit | `git init` then `git add .` then `git commit -m "Initial commit"` |
+| 2. First commit | `git add .` then `git commit -m "Initial commit"` |
 | 3. Add GitHub remote | `git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git` |
 | 4. Push | `git branch -M main` then `git push -u origin main` |
 

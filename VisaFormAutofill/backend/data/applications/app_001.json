@@ -1,0 +1,29 @@
+{
+  "id": "app_001",
+  "organization_id": "org_xyz",
+  "created_by": "user_001",
+  "visa_category": "B1B2",
+  "status": "draft",
+  "applicant": {
+    "full_name": "Jane Applicant",
+    "date_of_birth": "1990-05-20",
+    "nationality": "GBR",
+    "passport_number": "AB1234567",
+    "passport_expiry": "2030-12-31",
+    "email": "jane@example.com",
+    "phone": "+44 7700 900000"
+  },
+  "form_answers": {
+    "purpose_of_trip": "business",
+    "intended_dates": "2025-03-01 to 2025-03-15",
+    "has_dependents": false,
+    "previous_visa_refusals": false
+  },
+  "document_ids": ["doc_001", "doc_002"],
+  "compliance_summary": {
+    "pass": true,
+    "issues_count": 0
+  },
+  "created_at": "2025-01-15T10:00:00Z",
+  "updated_at": "2025-01-20T14:30:00Z"
+}

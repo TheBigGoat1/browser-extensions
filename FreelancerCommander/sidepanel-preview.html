@@ -3,8 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Command Center Pro</title>
+  <title>AI Command Center Pro (Preview)</title>
   <style>
+    .preview-banner {
+      flex-shrink: 0;
+      padding: 6px 12px;
+      background: var(--accent-muted);
+      border-bottom: 1px solid var(--border-default);
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 600;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
     /* ========== DESIGN SYSTEM ========== */
     :root {
       /* Spacing scale (4px base) */
@@ -174,15 +186,6 @@
       border-color: var(--accent);
       color: var(--bg-base);
       font-weight: 600;
-    }
-
-    /* ========== MAIN: must take remaining height so iframes are visible ========== */
-    .ai-panels {
-      flex: 1 1 0;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
     }
 
     /* ========== AI PANELS ========== */
@@ -414,6 +417,7 @@
   </style>
 </head>
 <body>
+  <div class="preview-banner">Preview — design only. Load extension for full test.</div>
   <header class="app-header">
     <img src="freelance.png" alt="" class="app-logo">
     <div class="app-title-group">
@@ -522,6 +526,7 @@
 
   <div class="status-indicator" id="statusIndicator" role="status" aria-live="polite"></div>
 
+  <script src="preview-mock-chrome.js"></script>
   <script src="sidepanel.js"></script>
 </body>
 </html>

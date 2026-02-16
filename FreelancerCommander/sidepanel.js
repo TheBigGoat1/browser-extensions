@@ -42,7 +42,7 @@ const AI_CONFIG = {
   deepseek: { name: 'DeepSeek', url: 'https://chat.deepseek.com', iframeId: 'deepseek-iframe' },
   gemini: { name: 'Gemini', url: 'https://gemini.google.com', iframeId: 'gemini-iframe' },
   github: { name: 'GitHub', url: 'https://github.com', iframeId: 'github-iframe' },
-  word: { name: 'Word Online', url: 'https://word.cloud.microsoft.com', iframeId: 'word-iframe' }
+  word: { name: 'Word Online', url: 'https://word.cloud.microsoft.com/open/onedrive/?docId=C150B91C2726C2B5%21sfd08fa830ac34e18bf9220ea8726f935&driveId=C150B91C2726C2B5', iframeId: 'word-iframe' }
 };
 
 // ============================================================================
@@ -292,7 +292,8 @@ function checkAIContent() {
  */
 async function handleTranslate() {
   const btn = document.getElementById('btn-translate');
-  const originalText = btn?.textContent || '';
+  const label = btn?.querySelector('.btn-label');
+  const originalText = label ? label.textContent : (btn?.textContent || '');
   
   chrome.storage.local.get(['lastSelection'], async (res) => {
     const text = res.lastSelection || '';
@@ -302,11 +303,11 @@ async function handleTranslate() {
       return;
     }
     
-    // Visual feedback
     if (btn) {
-      btn.textContent = 'COPIED & READY!';
-      btn.style.borderColor = '#00ff88';
-      btn.style.color = '#00ff88';
+      if (label) label.textContent = 'Ready';
+      else btn.textContent = 'Ready';
+      btn.style.borderColor = 'var(--success)';
+      btn.style.color = 'var(--success)';
     }
     
     const prompt = PROMPT_LIBRARY.translate(text);
@@ -316,10 +317,10 @@ async function handleTranslate() {
       chrome.storage.local.set({ lastPrompt: prompt, lastPromptType: 'translate' });
     }
     
-    // Reset button after 2 seconds
     setTimeout(() => {
       if (btn) {
-        btn.textContent = originalText;
+        if (label) label.textContent = originalText;
+        else btn.textContent = originalText;
         btn.style.borderColor = '';
         btn.style.color = '';
       }
@@ -332,7 +333,8 @@ async function handleTranslate() {
  */
 async function handleDraftProposal() {
   const btn = document.getElementById('btn-proposal');
-  const originalText = btn?.textContent || '';
+  const label = btn?.querySelector('.btn-label');
+  const originalText = label ? label.textContent : (btn?.textContent || '');
   
   chrome.storage.local.get(['lastSelection'], async (res) => {
     const text = res.lastSelection || '';
@@ -342,11 +344,11 @@ async function handleDraftProposal() {
       return;
     }
     
-    // Visual feedback
     if (btn) {
-      btn.textContent = 'COPIED & READY!';
-      btn.style.borderColor = '#00ff88';
-      btn.style.color = '#00ff88';
+      if (label) label.textContent = 'Ready';
+      else btn.textContent = 'Ready';
+      btn.style.borderColor = 'var(--success)';
+      btn.style.color = 'var(--success)';
     }
     
     const prompt = PROMPT_LIBRARY.proposal(text);
@@ -356,10 +358,10 @@ async function handleDraftProposal() {
       chrome.storage.local.set({ lastPrompt: prompt, lastPromptType: 'proposal' });
     }
     
-    // Reset button after 2 seconds
     setTimeout(() => {
       if (btn) {
-        btn.textContent = originalText;
+        if (label) label.textContent = originalText;
+        else btn.textContent = originalText;
         btn.style.borderColor = '';
         btn.style.color = '';
       }
@@ -372,7 +374,8 @@ async function handleDraftProposal() {
  */
 async function handleUrgentBid() {
   const btn = document.getElementById('btn-urgent');
-  const originalText = btn?.textContent || '';
+  const label = btn?.querySelector('.btn-label');
+  const originalText = label ? label.textContent : (btn?.textContent || '');
   
   chrome.storage.local.get(['lastSelection'], async (res) => {
     const text = res.lastSelection || '';
@@ -382,11 +385,11 @@ async function handleUrgentBid() {
       return;
     }
     
-    // Visual feedback (red/urgent style)
     if (btn) {
-      btn.textContent = 'COPIED & READY!';
-      btn.style.borderColor = '#ff4444';
-      btn.style.color = '#ff4444';
+      if (label) label.textContent = 'Ready';
+      else btn.textContent = 'Ready';
+      btn.style.borderColor = 'var(--error)';
+      btn.style.color = 'var(--error)';
     }
     
     const prompt = PROMPT_LIBRARY.urgent(text);
@@ -396,10 +399,10 @@ async function handleUrgentBid() {
       chrome.storage.local.set({ lastPrompt: prompt, lastPromptType: 'urgent' });
     }
     
-    // Reset button after 2 seconds
     setTimeout(() => {
       if (btn) {
-        btn.textContent = originalText;
+        if (label) label.textContent = originalText;
+        else btn.textContent = originalText;
         btn.style.borderColor = '';
         btn.style.color = '';
       }
@@ -411,35 +414,16 @@ async function handleUrgentBid() {
 // AI SWITCHING & PANEL MANAGEMENT
 // ============================================================================
 
-/**
- * Switch between AI panels
- */
 function switchAI(aiId) {
-  if (!AI_CONFIG[aiId]) {
-    console.error('[CommandCenter] Unknown AI:', aiId);
-    return;
-  }
-  
-  // Update tabs
-  document.querySelectorAll('.ai-tab').forEach(tab => {
-    tab.classList.remove('active');
-  });
+  if (!AI_CONFIG[aiId]) return;
+
+  document.querySelectorAll('.ai-tab').forEach(tab => tab.classList.remove('active'));
   const tab = document.getElementById(`tab-${aiId}`);
-  if (tab) {
-    tab.classList.add('active');
-  }
-  
-  // Update panels
-  document.querySelectorAll('.ai-panel-container').forEach(panel => {
-    panel.classList.remove('active');
-  });
+  if (tab) tab.classList.add('active');
+
+  document.querySelectorAll('.ai-panel-container').forEach(panel => panel.classList.remove('active'));
   const panel = document.getElementById(`${aiId}-panel`);
-  if (panel) {
-    panel.classList.add('active');
-  }
-  
-  console.log(`[CommandCenter] Switched to ${aiId}`);
-  showStatus(`Switched to ${AI_CONFIG[aiId].name}`, 'success');
+  if (panel) panel.classList.add('active');
 }
 
 /**
@@ -456,28 +440,15 @@ function openInNewTab(aiId) {
   showStatus(`Opening ${config.name} in new tab...`, 'success');
 }
 
-/**
- * Refresh AI panel
- */
 function refreshAI(aiId) {
   const config = AI_CONFIG[aiId];
-  if (!config) {
-    showStatus('Unknown AI', 'error');
-    return;
-  }
-  
+  if (!config) return;
   const iframe = document.getElementById(config.iframeId);
   const loading = document.getElementById(`${aiId}-loading`);
-  
   if (iframe && loading) {
     loading.style.display = 'flex';
-    iframe.src = iframe.src; // Force reload
-    showStatus(`Refreshing ${config.name}...`, 'success');
-    
-    // Hide loading after delay
-    setTimeout(() => {
-      loading.style.display = 'none';
-    }, 3000);
+    iframe.src = iframe.src;
+    setTimeout(() => { loading.style.display = 'none'; }, 3000);
   }
 }
 
@@ -505,7 +476,7 @@ function showStatus(message, type = 'success') {
   if (!indicator) return;
   
   indicator.textContent = message;
-  indicator.className = `status-indicator active ${type}`;
+  indicator.className = 'status-indicator active status-' + (type === 'error' ? 'error' : 'success');
   
   setTimeout(() => {
     indicator.classList.remove('active');
@@ -517,7 +488,7 @@ function showStatus(message, type = 'success') {
 // ============================================================================
 
 function setupEventListeners() {
-  // AI Tab Switching
+  // AI Tab: switch panel only – chat loads in the side panel iframe (no new tab)
   document.querySelectorAll('.ai-tab').forEach(tab => {
     tab.addEventListener('click', (e) => {
       const aiId = tab.dataset.ai;
@@ -547,13 +518,6 @@ function setupEventListeners() {
   document.getElementById('btn-translate')?.addEventListener('click', handleTranslate);
   document.getElementById('btn-proposal')?.addEventListener('click', handleDraftProposal);
   document.getElementById('btn-urgent')?.addEventListener('click', handleUrgentBid);
-  
-  // Notification chime
-  document.getElementById('notif-chime')?.addEventListener('click', () => {
-    handleDraftProposal();
-    document.getElementById('notif-chime').style.display = 'none';
-    chrome.storage.local.set({ newJob: false });
-  });
 }
 
 // ============================================================================
@@ -587,18 +551,6 @@ function setupIframeHandlers() {
 chrome.storage.onChanged.addListener((changes, areaName) => {
   if (areaName !== 'local') return;
   
-  // New job detected
-  if (changes.newJob && changes.newJob.newValue === true) {
-    const chime = document.getElementById('notif-chime');
-    if (chime) {
-      chime.style.display = 'block';
-      setTimeout(() => {
-        chime.style.display = 'none';
-      }, 30000);
-    }
-  }
-  
-  // Selection updated
   if (changes.lastSelection) {
     const newText = changes.lastSelection.newValue || '';
     if (newText && newText.length > 10 && newText !== lastSelectedText) {
@@ -613,30 +565,12 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
 // ============================================================================
 
 function init() {
-  console.log('[CommandCenter] Initializing side panel...');
-  
-  // Setup event listeners
   setupEventListeners();
-  
-  // Setup iframe handlers
   setupIframeHandlers();
-  
-  // Start selection monitoring
   startSelectionMonitoring();
-  
-  // Check for existing selection
-  chrome.storage.local.get(['lastSelection', 'newJob'], (res) => {
-    if (res.lastSelection) {
-      lastSelectedText = res.lastSelection;
-      console.log('[CommandCenter] Previous selection found:', res.lastSelection.substring(0, 50));
-    }
-    
-    if (res.newJob) {
-      document.getElementById('notif-chime').style.display = 'block';
-    }
+  chrome.storage.local.get(['lastSelection'], (res) => {
+    if (res.lastSelection) lastSelectedText = res.lastSelection;
   });
-  
-  console.log('[CommandCenter] Side panel initialized');
 }
 
 // Initialize when DOM is ready

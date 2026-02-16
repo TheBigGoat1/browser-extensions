@@ -3,61 +3,32 @@
   "name": "AI Command Center Pro",
   "version": "3.1.0",
   "description": "Universal AI Command Center - Multi-AI parallel processing, text selection detection, and premium content generation. Optimized for Freelancer.com and all websites.",
-  
   "permissions": [
     "sidePanel",
     "contextMenus",
     "storage",
     "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess",
     "notifications",
     "tabs",
     "scripting",
     "activeTab"
   ],
-  
-  "host_permissions": [
-    "<all_urls>"
-  ],
-  
+  "host_permissions": ["<all_urls>"],
   "declarative_net_request": {
-    "rule_resources": [
-      {
-        "id": "ruleset",
-        "enabled": true,
-        "path": "rules.json"
-      }
-    ]
+    "rule_resources": [{"id": "ruleset", "enabled": true, "path": "rules.json"}]
   },
-  
-  "side_panel": {
-    "default_path": "sidepanel.html"
-  },
-  
-  "background": {
-    "service_worker": "background.js"
-  },
-  
+  "side_panel": {"default_path": "sidepanel.html"},
+  "background": {"service_worker": "background.js"},
   "action": {
     "default_title": "AI Command Center - Open Side Panel",
-    "default_icon": {
-      "16": "freelance.png",
-      "48": "freelance.png",
-      "128": "freelance.png"
-    }
+    "default_icon": {"16": "freelance.png", "48": "freelance.png", "128": "freelance.png"}
   },
-  
-  "icons": {
-    "16": "freelance.png",
-    "48": "freelance.png",
-    "128": "freelance.png"
-  },
-  
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "run_at": "document_idle",
-      "all_frames": true
-    }
-  ]
+  "icons": {"16": "freelance.png", "48": "freelance.png", "128": "freelance.png"},
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "js": ["content.js"],
+    "run_at": "document_idle",
+    "all_frames": true
+  }]
 }
