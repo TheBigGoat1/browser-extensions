@@ -11,6 +11,7 @@ Chrome/browser extensions built for productivity and trading.
 - **Lumina Write** – Writing assistant
 - **Web Intelligence** – Web intelligence tools
 - **WebScraper Pro** – Intelligent web scraping
+- **VisaFormAutofill** – Visa application form autofill from portal data (JSON backend, Chrome extension)
 - **YouTube Downloader** – YouTube download helper
 
 Each folder is a standalone extension. See the README inside each project for setup.
