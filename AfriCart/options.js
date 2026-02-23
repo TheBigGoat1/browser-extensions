@@ -5,19 +5,20 @@ const DEFAULT_SETTINGS = {
   showFlags: true,
   openInNewTab: true,
   affiliateEnabled: false,
-  preferredCountry: 'auto'
+  preferredCountry: 'auto',
+  locale: 'en'
 };
 
-// Load settings
 async function loadSettings() {
   try {
-    const data = await chrome.storage.local.get(['openInNewTab', 'showFlags', 'affiliateEnabled']);
+    const data = await chrome.storage.local.get(['openInNewTab', 'showFlags', 'affiliateEnabled', 'locale']);
     
     document.getElementById('openInNewTab').checked = data.openInNewTab !== false;
     document.getElementById('showFlags').checked = data.showFlags !== false;
     document.getElementById('affiliateEnabled').checked = data.affiliateEnabled === true;
+    const localeEl = document.getElementById('locale');
+    if (localeEl && data.locale) localeEl.value = ['en', 'fr', 'es'].includes(data.locale) ? data.locale : 'en';
     
-    // Load stats
     await loadStats();
   } catch (error) {
     console.error('[AfriCart] Error loading settings:', error);
@@ -61,10 +62,12 @@ async function loadStats() {
 // Save settings
 async function saveSettings() {
   try {
+    const localeEl = document.getElementById('locale');
     await chrome.storage.local.set({
       openInNewTab: document.getElementById('openInNewTab').checked,
       showFlags: document.getElementById('showFlags').checked,
-      affiliateEnabled: document.getElementById('affiliateEnabled').checked
+      affiliateEnabled: document.getElementById('affiliateEnabled').checked,
+      locale: localeEl && ['en', 'fr', 'es'].includes(localeEl.value) ? localeEl.value : 'en'
     });
     
     showSuccess();

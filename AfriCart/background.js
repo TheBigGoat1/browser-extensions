@@ -4,13 +4,13 @@
 // Initialize extension
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install') {
-    // Set default settings
     chrome.storage.local.set({
       enabled: true,
       showFlags: true,
       openInNewTab: true,
       affiliateEnabled: false,
-      preferredCountry: 'auto'
+      preferredCountry: 'auto',
+      locale: 'auto'
     });
   }
 });
@@ -44,21 +44,33 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return true;
 });
 
-// Track usage analytics
+// Track usage analytics (for dashboard, stats by date, and activity log)
 async function trackUsage(action, store) {
   try {
-    const analytics = await chrome.storage.local.get(['usageStats']);
-    const stats = analytics.usageStats || {
-      totalHops: 0,
-      hopsByStore: {},
-      lastHop: null
-    };
-    
+    const key = 'usageStats';
+    const dateKey = 'statsByDate';
+    const analytics = await chrome.storage.local.get([key, dateKey, 'activityLog']);
+    const stats = analytics[key] || { totalHops: 0, hopsByStore: {}, lastHop: null };
+    const byDate = analytics[dateKey] || {};
+
     stats.totalHops++;
     stats.hopsByStore[store] = (stats.hopsByStore[store] || 0) + 1;
     stats.lastHop = Date.now();
-    
-    await chrome.storage.local.set({ usageStats: stats });
+
+    const today = new Date().toISOString().slice(0, 10);
+    if (!byDate[today]) byDate[today] = { count: 0, stores: {} };
+    byDate[today].count++;
+    byDate[today].stores[store] = (byDate[today].stores[store] || 0) + 1;
+
+    const activityLog = analytics.activityLog || [];
+    activityLog.unshift({
+      ts: Date.now(),
+      level: 'info',
+      message: 'Price comparison opened',
+      store: store,
+    });
+    const trimmed = activityLog.slice(0, 100);
+    await chrome.storage.local.set({ [key]: stats, [dateKey]: byDate, activityLog: trimmed });
   } catch (error) {
     console.error('[AfriCart] Error tracking usage:', error);
   }

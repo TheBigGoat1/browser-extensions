@@ -1,9 +1,18 @@
 // AfriCart - Site-Aware Content Scraper
 // Intelligently extracts product information from global e-commerce platforms
 
-// Import global stores database
-// Note: In production, this would be loaded from stores-database.js
-// For now, we'll include the comprehensive list here
+// ---------------------------------------------------------------------------
+// DEFINITIONS (strict – we extract only this)
+// ---------------------------------------------------------------------------
+// PRODUCT: The single item on the page. We extract only:
+//   - title, price, currency, main product image URL, product page URL
+//   - originalPrice/discount when present (same product, pricing only)
+// No banners, no recommendations, no description blobs, no extra images.
+//
+// PRODUCT IMAGE: The one main photo of that product (the hero/main image).
+//   - One image only. Must be a real image URL (http/https).
+//   - We reject logos, icons, thumbnails, and tiny images (min 80px).
+// ---------------------------------------------------------------------------
 
 // Global Store Configuration Map - COMPREHENSIVE DATABASE
 // All major e-commerce platforms: Africa, Europe, USA
@@ -198,13 +207,31 @@ const AFRICAN_STORES = {
     country: 'Kenya',
     region: 'East Africa',
     currency: 'KES',
-    flag: '🇰🇪',
+    flag: 'KE',
+    countryCode: 'KE',
     selectors: {
-      title: 'h1.product-title, h1, .product-name',
-      price: '.price, [data-price], .product-price',
-      originalPrice: '.old-price, .was-price, s, del',
-      image: '.product-image img, .main-image img',
-      description: '.product-description'
+      title: 'h1.product-title, h1, .product-name, .goods-name, [class*="product-name"] h1, [class*="title"]',
+      price: '.price, [data-price], .product-price, .sale-price, [class*="price"]:not(.old-price), .current-price, .goods-price',
+      originalPrice: '.old-price, .was-price, .original-price, s, del, [class*="old"]',
+      image: '.product-image img, .main-image img, .goods-image img, [class*="gallery"] img, img[src*="product"]',
+      description: '.product-description, .goods-detail, .description'
+    },
+    searchUrl: 'https://www.kilimall.co.ke/new/search?q=',
+    affiliateParam: 'utm_source=africart'
+  },
+  'kilimall.co.ke': {
+    name: 'Kilimall',
+    country: 'Kenya',
+    region: 'East Africa',
+    currency: 'KES',
+    flag: 'KE',
+    countryCode: 'KE',
+    selectors: {
+      title: 'h1.product-title, h1, .product-name, .goods-name, .goods-detail-name, [class*="product-name"], [class*="goods-name"]',
+      price: '.price, [data-price], .product-price, .sale-price, .goods-price, [class*="sale-price"], [class*="current-price"]',
+      originalPrice: '.old-price, .was-price, .original-price, s, del',
+      image: '.product-image img, .main-image img, .goods-image img, [class*="gallery"] img, [class*="slide"] img',
+      description: '.product-description, .goods-detail, .description'
     },
     searchUrl: 'https://www.kilimall.co.ke/new/search?q=',
     affiliateParam: 'utm_source=africart'
@@ -1157,7 +1184,32 @@ function detectStore() {
   return null;
 }
 
-// Extract product information
+// Minimum size for a valid product image (avoid logos/icons)
+const PRODUCT_IMAGE_MIN_SIZE = 80;
+
+/**
+ * Get the single main product image URL only. No banners, logos, or other images.
+ * Returns first valid image from store selectors that is large enough (>= PRODUCT_IMAGE_MIN_SIZE).
+ */
+function getMainProductImageUrl(doc, storeConfig) {
+  if (!doc || !storeConfig || !storeConfig.selectors || !storeConfig.selectors.image) return '';
+  const selectors = storeConfig.selectors.image.split(',').map(s => s.trim());
+  for (const selector of selectors) {
+    const el = doc.querySelector(selector);
+    if (!el) continue;
+    const img = el.tagName === 'IMG' ? el : el.querySelector('img');
+    const src = (img || el).src || (img || el).getAttribute('data-src') || (img || el).getAttribute('data-lazy-src') ||
+      (typeof (img || el).getAttribute('srcset') === 'string' ? (img || el).getAttribute('srcset').split(',')[0].trim().split(/\s+/)[0] : null);
+    if (!src || typeof src !== 'string') continue;
+    const url = src.startsWith('//') ? 'https:' + src : src;
+    if (!/^https?:\/\//i.test(url) || /\.(svg|ico)(\?|$)/i.test(url)) continue;
+    if (img && img.naturalWidth != null && (img.naturalWidth < PRODUCT_IMAGE_MIN_SIZE || img.naturalHeight < PRODUCT_IMAGE_MIN_SIZE)) continue;
+    return url;
+  }
+  return '';
+}
+
+// Extract product information – product only: title, price, main image, url
 function extractProductInfo(storeConfig) {
   if (!storeConfig) return null;
   
@@ -1171,7 +1223,6 @@ function extractProductInfo(storeConfig) {
     originalPrice: '',
     discount: '',
     image: '',
-    description: '',
     url: window.location.href
   };
   
@@ -1264,6 +1315,19 @@ function extractProductInfo(storeConfig) {
       }
     }
   }
+  // Fallback: any element with price-like class containing a number
+  if (!info.price) {
+    const priceLike = document.querySelectorAll('[class*="price"]:not([class*="old"]):not([class*="was"]), [class*="amount"], [class*="cost"]');
+    for (const el of priceLike) {
+      const text = (el.textContent || '').trim();
+      const cleaned = text.replace(/[^\d.,]/g, '').replace(/,/g, '');
+      const priceNum = parseFloat(cleaned);
+      if (!isNaN(priceNum) && priceNum > 0 && priceNum < 1e9) {
+        info.price = cleaned;
+        break;
+      }
+    }
+  }
   
   // Calculate discount if we have both prices
   if (info.originalPrice && info.price) {
@@ -1276,41 +1340,31 @@ function extractProductInfo(storeConfig) {
     }
   }
   
-  // Extract image
-  for (const selector of storeConfig.selectors.image.split(',')) {
-    const element = document.querySelector(selector.trim());
-    if (element) {
-      info.image = element.src || element.getAttribute('data-src') || element.getAttribute('srcset')?.split(',')[0]?.trim();
-      break;
-    }
-  }
-  
-  // Extract description (first 200 chars)
-  for (const selector of storeConfig.selectors.description.split(',')) {
-    const element = document.querySelector(selector.trim());
-    if (element) {
-      info.description = element.textContent.trim().substring(0, 200);
-      break;
-    }
-  }
+  // Product image only – single main image, validated
+  info.image = getMainProductImageUrl(document, storeConfig);
   
   return info;
 }
 
 // Get all available stores for comparison (location-aware)
-async function getComparisonStores(currentStore, userCountry = null, userRegion = null) {
+async function getComparisonStores(currentStore, userCountry = null, userRegion = null, currentStoreConfig = null) {
   const stores = [];
   const seenDomains = new Set();
+  const seenStoreNames = new Set();
+  if (currentStoreConfig && currentStoreConfig.name) {
+    seenStoreNames.add(currentStoreConfig.name);
+  }
   
-  // If user country is provided, prioritize same country stores
   let priorityStores = [];
   let sameRegionStores = [];
   let otherStores = [];
   
   for (const [domain, config] of Object.entries(AFRICAN_STORES)) {
-    // Skip current store and duplicates
     if (domain === currentStore || seenDomains.has(domain)) continue;
+    if (currentStoreConfig && config.name === currentStoreConfig.name) continue;
+    if (seenStoreNames.has(config.name)) continue;
     seenDomains.add(domain);
+    seenStoreNames.add(config.name);
     
     const storeData = {
       domain: domain,
@@ -1346,7 +1400,9 @@ async function extractProductData() {
     };
   }
   
-  // Use smart parser if available, otherwise fallback to basic extraction
+  // Use smart parser if available, otherwise fallback to basic extraction.
+  // We always normalize to product-only: title, price, main image, url (and store/currency for UI).
+  // Main product image comes only from getMainProductImageUrl (one image, validated).
   let productInfo;
   if (typeof africartParser !== 'undefined') {
     const parsed = africartParser.parse(hostname, document);
@@ -1359,15 +1415,24 @@ async function extractProductData() {
       title: parsed.title || '',
       price: parsed.price || '',
       originalPrice: parsed.originalPrice || '',
-      image: parsed.image || '',
-      description: parsed.description || '',
-      availability: parsed.availability || 'unknown',
-      rating: parsed.rating || null,
+      discount: '',
+      image: getMainProductImageUrl(document, storeConfig) || parsed.image || '',
       url: window.location.href
     };
+    if (productInfo.originalPrice && productInfo.price) {
+      const orig = parseFloat(String(productInfo.originalPrice).replace(/[^\d.]/g, ''));
+      const curr = parseFloat(String(productInfo.price).replace(/[^\d.]/g, ''));
+      if (!isNaN(orig) && !isNaN(curr) && orig > curr)
+        productInfo.discount = `${Math.round((1 - curr / orig) * 100)}% OFF`;
+    }
   } else {
     productInfo = extractProductInfo(storeConfig);
   }
+  // Ensure image is a single valid product image URL (no banners/logos)
+  if (productInfo.image && !/^https?:\/\//i.test(productInfo.image))
+    productInfo.image = '';
+  if (productInfo.image && /\.(svg|ico)(\?|$)/i.test(productInfo.image))
+    productInfo.image = '';
   
   // Detect coupons on page
   let coupons = [];
@@ -1403,7 +1468,8 @@ async function extractProductData() {
   const comparisonStores = await getComparisonStores(
     window.location.hostname.replace(/^www\./, ''),
     userCountry,
-    userRegion
+    userRegion,
+    storeConfig
   );
   
   // Get price history trend

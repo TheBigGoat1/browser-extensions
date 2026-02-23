@@ -1,5 +1,8 @@
 // AfriCart - Smart Site-Specific Parser
 // Contextual awareness: Knows exactly what store you're on and extracts data accurately
+//
+// We extract only the PRODUCT: title, price, and the single main PRODUCT IMAGE (one URL).
+// No banners, no logos, no description – product and its main image only.
 
 class AfriCartParser {
   constructor() {
@@ -305,6 +308,91 @@ class AfriCartParser {
             '[data-testid="availability"]',
             '.availability'
           ]
+        }
+      },
+
+      'kilimall.co.ke': {
+        name: 'Kilimall',
+        selectors: {
+          title: [
+            'h1',
+            '.product-name',
+            '.goods-name',
+            '.goods-detail-name',
+            '[class*="product-name"]',
+            '[class*="goods-name"]',
+            '.product-title'
+          ],
+          price: [
+            '[data-price]',
+            '.sale-price',
+            '.goods-price',
+            '.current-price',
+            '[class*="sale-price"]',
+            '[class*="current-price"]',
+            '.price',
+            '[class*="price"]'
+          ],
+          originalPrice: [
+            '.old-price',
+            '.was-price',
+            '.original-price',
+            's',
+            'del'
+          ],
+          image: [
+            '[class*="gallery"] img',
+            '[class*="slide"] img',
+            '.product-image img',
+            '.main-image img',
+            '.goods-image img',
+            'img[src*="product"]',
+            'img[src*="goods"]'
+          ],
+          description: [
+            '.product-description',
+            '.goods-detail',
+            '.description'
+          ],
+          availability: [
+            '.stock',
+            '[class*="stock"]',
+            '.availability'
+          ]
+        }
+      },
+      'kilimall.com': {
+        name: 'Kilimall',
+        selectors: {
+          title: [
+            'h1',
+            '.product-name',
+            '.goods-name',
+            '[class*="product-name"]',
+            '.product-title'
+          ],
+          price: [
+            '[data-price]',
+            '.sale-price',
+            '.price',
+            '[class*="price"]'
+          ],
+          originalPrice: [
+            '.old-price',
+            '.was-price',
+            's',
+            'del'
+          ],
+          image: [
+            '.product-image img',
+            '[class*="gallery"] img',
+            'img[src*="product"]'
+          ],
+          description: [
+            '.product-description',
+            '.description'
+          ],
+          availability: []
         }
       }
     };

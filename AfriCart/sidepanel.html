@@ -17,7 +17,7 @@
             <div class="header-content">
                 <div class="logo-section">
                     <div class="logo-icon-wrapper">
-                        <div class="logo-icon">🛒</div>
+                        <img src="trolley.png" alt="AfriCart" class="logo-icon-img" width="48" height="48">
                         <div class="logo-glow"></div>
                     </div>
                     <div class="logo-text">
@@ -25,12 +25,11 @@
                             <span class="brand-name-main">AFRICART</span>
                         </h1>
                         <p class="brand-tagline">
-                            <span class="tagline-icon">💡</span>
-                            <span>Smart Price Comparison</span>
+                            <span class="tagline-text" id="taglineText">Smart Price Comparison</span>
                         </p>
                     </div>
                 </div>
-                <button id="settingsBtn" class="header-btn" title="Settings">
+                <button id="settingsBtn" class="header-btn" type="button" title="Settings" aria-label="Open settings">
                     <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
                         <path d="M11 13.75C12.5188 13.75 13.75 12.5188 13.75 11C13.75 9.48122 12.5188 8.25 11 8.25C9.48122 8.25 8.25 9.48122 8.25 11C8.25 12.5188 9.48122 13.75 11 13.75Z" stroke="currentColor" stroke-width="1.5"/>
                         <path d="M17.4167 11C17.4167 10.6242 17.4442 10.2575 17.4808 9.9L19.4242 8.90083C19.5892 8.80917 19.6808 8.62583 19.635 8.45167L18.9017 5.84833C18.8558 5.67417 18.7 5.555 18.5167 5.555H3.48333C3.3 5.555 3.14417 5.67417 3.09833 5.84833L2.365 8.45167C2.31917 8.62583 2.41083 8.80917 2.57583 8.90083L4.51917 9.9C4.55583 10.2575 4.58333 10.6242 4.58333 11C4.58333 11.3758 4.55583 11.7425 4.51917 12.1L2.57583 13.0992C2.41083 13.1908 2.31917 13.3742 2.365 13.5483L3.09833 16.1517C3.14417 16.3258 3.3 16.445 3.48333 16.445H18.5167C18.7 16.445 18.8558 16.3258 18.9017 16.1517L19.635 13.5483C19.6808 13.3742 19.5892 13.1908 19.4242 13.0992L17.4808 12.1C17.4442 11.7425 17.4167 11.3758 17.4167 11Z" stroke="currentColor" stroke-width="1.5"/>
@@ -39,13 +38,14 @@
             </div>
         </header>
 
+        <main id="appMain" class="app-main" role="main">
         <!-- Current Product Card - Premium Design -->
         <div id="productCard" class="product-card" style="display: none;">
             <div class="product-card-glow"></div>
             <div class="product-header">
                 <div class="store-badge" id="storeBadge">
                     <div class="store-badge-icon">
-                        <span class="store-flag" id="storeFlag">🇳🇬</span>
+                        <span class="store-flag store-country-code" id="storeFlag">NG</span>
                     </div>
                     <div class="store-badge-content">
                         <span class="store-badge-label">Current Store</span>
@@ -97,11 +97,16 @@
                             <path d="M8 14L3 9C2 8 2 6.5 3 5.5C4 4.5 5.5 4.5 6.5 5.5L8 7L9.5 5.5C10.5 4.5 12 4.5 13 5.5C14 6.5 14 8 13 9L8 14Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </button>
-                    <button id="priceHistoryBtn" class="action-btn-mini" title="Price History">
+                    <button id="priceHistoryBtn" class="action-btn-mini" type="button" title="Price History" aria-label="View price history">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                             <rect x="2" y="7" width="2.5" height="7" rx="0.5" stroke="currentColor" stroke-width="1.5"/>
                             <rect x="5.5" y="4" width="2.5" height="10" rx="0.5" stroke="currentColor" stroke-width="1.5"/>
                             <rect x="9" y="1" width="2.5" height="13" rx="0.5" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                    </button>
+                    <button id="currencyConverterBtn" class="action-btn-mini" title="Currency Converter">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M8 1V15M4 5L8 1L12 5M4 11L8 15L12 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </button>
                 </div>
@@ -152,37 +157,42 @@
         <!-- Not Supported Message - Enhanced -->
         <div id="notSupportedCard" class="info-card" style="display: none;">
             <div class="info-card-icon-wrapper">
-                <div class="info-icon">ℹ️</div>
+                <svg class="info-icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4M12 8h.01"/>
+                </svg>
             </div>
             <div class="info-content">
                 <h3 class="info-title">Store Not Supported</h3>
-                <p class="info-description">Navigate to a supported African e-commerce site to compare prices:</p>
+                <p class="info-description">Open a product page on a supported site to compare prices:</p>
                 <div class="supported-stores-grid">
                     <div class="supported-store-item">
-                        <span class="store-flag-small">🇳🇬</span>
+                        <span class="store-flag-small store-country-code">NG</span>
                         <span class="store-names">Jumia, Konga, Slot</span>
                     </div>
                     <div class="supported-store-item">
-                        <span class="store-flag-small">🇿🇦</span>
+                        <span class="store-flag-small store-country-code">ZA</span>
                         <span class="store-names">Takealot, Zando, Superbalist</span>
                     </div>
                     <div class="supported-store-item">
-                        <span class="store-flag-small">🇰🇪</span>
+                        <span class="store-flag-small store-country-code">KE</span>
                         <span class="store-names">Jumia, Kilimall, Amanbo</span>
                     </div>
                     <div class="supported-store-item">
-                        <span class="store-flag-small">🇪🇬</span>
+                        <span class="store-flag-small store-country-code">EG</span>
                         <span class="store-names">Jumia, Amazon, Noon</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Comparison Section - Simplified -->
-        <section id="comparisonSection" class="comparison-section" style="display: none;">
+        <!-- Comparison Section - Same product, compare prices -->
+        <section id="comparisonSection" class="comparison-section" style="display: none;" aria-label="Compare prices on other stores">
             <div class="section-header-simple">
                 <h3 class="section-title-simple">Compare Prices</h3>
+                <p class="section-subtitle">Same product – check other stores for the best price</p>
             </div>
+            <div id="bestPriceSuggestion" class="best-price-suggestion-wrap"></div>
             <div id="comparisonGrid" class="comparison-grid-simple"></div>
         </section>
 
@@ -284,6 +294,8 @@
         </footer>
     </div>
 
+    <script src="messages.js"></script>
+    <script src="i18n.js"></script>
     <script src="utils.js"></script>
     <script src="sidepanel.js"></script>
 </body>

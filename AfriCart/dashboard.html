@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AfriCart – Statistics &amp; Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .dashboard { max-width: 900px; margin: 0 auto; padding: 24px; }
+    .dashboard h1 { font-size: 24px; margin-bottom: 8px; color: var(--gray-900); }
+    .dashboard-sub { font-size: 14px; color: var(--gray-500); margin-bottom: 24px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .card { background: white; border: 1px solid var(--gray-200); border-radius: 12px; padding: 20px; }
+    .card-label { font-size: 12px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .card-value { font-size: 28px; font-weight: 700; color: var(--primary); }
+    .chart-section { background: white; border: 1px solid var(--gray-200); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+    .chart-section h2 { font-size: 16px; margin-bottom: 16px; color: var(--gray-800); }
+    .chart-bars { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding: 8px 0; }
+    .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; min-width: 0; }
+    .chart-bar { width: 100%; max-width: 32px; background: var(--primary); border-radius: 4px 4px 0 0; min-height: 4px; }
+    .chart-label { font-size: 10px; color: var(--gray-500); margin-top: 6px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .activity-section { background: white; border: 1px solid var(--gray-200); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+    .activity-section h2 { font-size: 16px; margin-bottom: 12px; color: var(--gray-800); }
+    .activity-list { max-height: 240px; overflow-y: auto; }
+    .activity-item { font-size: 13px; padding: 8px 0; border-bottom: 1px solid var(--gray-100); display: flex; justify-content: space-between; gap: 12px; }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-msg { color: var(--gray-800); }
+    .activity-meta { font-size: 11px; color: var(--gray-500); white-space: nowrap; }
+    .export-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+    .btn-dash { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid var(--gray-200); background: white; color: var(--gray-700); }
+    .btn-dash:hover { background: var(--gray-100); border-color: var(--primary); color: var(--primary); }
+    .btn-dash.primary { background: var(--primary); color: white; border-color: var(--primary); }
+    .btn-dash.primary:hover { background: var(--primary-dark); }
+    .empty-state { color: var(--gray-500); font-size: 14px; padding: 24px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header" style="flex-shrink:0;">
+      <div class="header-content">
+        <div class="logo-section">
+          <img src="trolley.png" alt="AfriCart" class="logo-icon-img" width="40" height="40" style="border-radius:8px;">
+          <div class="logo-text">
+            <h1 class="brand-name" style="font-size:22px;">AFRICART</h1>
+            <p class="brand-tagline" style="font-size:11px;">Statistics &amp; Dashboard</p>
+          </div>
+        </div>
+        <a href="options.html" class="header-btn" style="text-decoration:none;color:inherit;">Settings</a>
+      </div>
+    </header>
+    <main class="app-main" style="padding:0;">
+      <div class="dashboard">
+        <h1 id="dashboardTitle">Statistics</h1>
+        <p class="dashboard-sub" id="dashboardNote">All data is stored locally in your browser.</p>
+
+        <div class="cards">
+          <div class="card">
+            <div class="card-label" id="labelTotal">Total comparisons</div>
+            <div class="card-value" id="statTotal">0</div>
+          </div>
+          <div class="card">
+            <div class="card-label" id="labelLast">Last activity</div>
+            <div class="card-value" id="statLast" style="font-size:16px;">—</div>
+          </div>
+        </div>
+
+        <div class="chart-section">
+          <h2 id="labelByStore">Comparisons by store</h2>
+          <div id="chartByStore" class="chart-bars"></div>
+          <p id="chartEmpty" class="empty-state" style="display:none;">No comparisons yet. Use the extension on a product page to compare.</p>
+        </div>
+
+        <div class="chart-section">
+          <h2 id="labelByDate">Comparisons over last 14 days</h2>
+          <div id="chartByDate" class="chart-bars"></div>
+          <p id="dateEmpty" class="empty-state" style="display:none;">No data for the last 14 days.</p>
+        </div>
+
+        <div class="activity-section">
+          <h2 id="labelActivity">Activity log</h2>
+          <div id="activityList" class="activity-list"></div>
+          <p id="activityEmpty" class="empty-state" style="display:none;">No activity yet.</p>
+        </div>
+
+        <div class="export-row">
+          <button type="button" class="btn-dash primary" id="exportJson">Export stats (JSON)</button>
+          <button type="button" class="btn-dash" id="exportCsv">Export CSV</button>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="messages.js"></script>
+  <script src="i18n.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

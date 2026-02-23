@@ -2,9 +2,19 @@
 
 **Compare prices across African e-commerce platforms. Find the best deals on Jumia, Konga, Takealot, Kilimall, and more.**
 
-**Version 1.5.0** - Now with Price History, Alerts, Wishlist, Multi-Product Comparison, Currency Conversion, Shipping Calculator, and Review Aggregation!
+**Version 1.5.0** – Price history, alerts, wishlist, multi-product comparison, currency conversion, shipping calculator, and more.
 
-AfriCart is a specialized price comparison extension designed specifically for the African e-commerce market. Unlike global extensions that focus on US/EU markets, AfriCart understands local currency, logistics, and regional stores.
+---
+
+## What AfriCart does (from the top)
+
+AfriCart is a **browser extension that compares product prices across African and global e-commerce sites.** When you're on a product page (e.g. Jumia, Konga, Takealot), you open the AfriCart side panel to see the current product and one-click buttons to **search the same product on other stores** in new tabs. All features (price history, wishlist, currency converter, shipping estimate, multi-product comparison) are tied to that current product so the extension stays consistent and easy to use.
+
+- **One product page → one panel → hop to other stores.**  
+- **Icon:** The extension and side panel use the trolley icon (`trolley.png`) for branding.  
+- **Feature correlation:** See [OVERVIEW.md](OVERVIEW.md) for how each feature connects to the current product and to each other.
+
+AfriCart is built for the African e-commerce market (local currency, logistics, regional stores) but also supports many global stores (Amazon, eBay, Temu, etc.).
 
 ## 🌍 Features
 

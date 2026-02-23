@@ -1,77 +1,105 @@
 // AfriCart - Side Panel Orchestrator
-// Handles product extraction, price comparison, and link building
+// Handles product extraction, price comparison, and link building.
+// Best practice: defensive checks, single init flow, no global pollution.
 
 let currentProductData = null;
 let currentStoreConfig = null;
 
-// Initialize AfriCart
-async function init() {
-  setupEventListeners();
-  await loadProductInfo();
+/** Safe getElementById – returns null if missing (avoids crashes) */
+function getEl(id) {
+  if (!id || typeof document === 'undefined') return null;
+  return document.getElementById(id);
 }
 
-// Setup all event listeners
+// Country name to 2-letter code (no emoji)
+const COUNTRY_CODE = {
+  'Nigeria': 'NG', 'South Africa': 'ZA', 'Kenya': 'KE', 'Egypt': 'EG',
+  'Ghana': 'GH', 'Tanzania': 'TZ', 'Uganda': 'UG', 'Morocco': 'MA',
+  'Algeria': 'DZ', "Côte d'Ivoire": 'CI', 'Senegal': 'SN',
+  'United States': 'US', 'United Kingdom': 'UK', 'Germany': 'DE',
+  'France': 'FR', 'Spain': 'ES', 'Italy': 'IT', 'Netherlands': 'NL',
+  'Poland': 'PL', 'Romania': 'RO', 'Bulgaria': 'BG', 'Hungary': 'HU',
+  'Global': '—'
+};
+function getCountryCode(store) {
+  if (!store) return '—';
+  if (store.countryCode) return store.countryCode;
+  if (typeof store.flag === 'string' && store.flag.length === 2 && /^[A-Z]{2}$/i.test(store.flag)) return store.flag.toUpperCase();
+  return COUNTRY_CODE[store.country] || (store.country ? store.country.slice(0, 2).toUpperCase() : '—');
+}
+
+/** Apply current language to UI (run after initI18n) */
+function applyI18n() {
+  if (typeof t !== 'function') return;
+  const set = (id, key) => { const el = getEl(id); if (el) el.textContent = t(key); };
+  set('taglineText', 'tagline');
+  const sectionTitle = document.querySelector('#comparisonSection .section-title-simple');
+  if (sectionTitle) sectionTitle.textContent = t('comparePrices');
+  const sectionSub = document.querySelector('#comparisonSection .section-subtitle');
+  if (sectionSub) sectionSub.textContent = t('compareSubtitle');
+  const refreshBtn = getEl('refreshBtn');
+  if (refreshBtn) { const span = refreshBtn.querySelector('.action-btn-text'); if (span) span.textContent = t('refresh'); }
+  const copyBtn = getEl('copyLinkBtn');
+  if (copyBtn) { const span = copyBtn.querySelector('.action-btn-text'); if (span) span.textContent = t('copyLink'); }
+  const storeBadgeLabel = document.querySelector('.store-badge-label');
+  if (storeBadgeLabel) storeBadgeLabel.textContent = t('currentStore');
+}
+
+// Initialize AfriCart (single entry, error-safe)
+async function init() {
+  try {
+    if (typeof initI18n === 'function') await initI18n();
+    applyI18n();
+    setupEventListeners();
+    await loadProductInfo();
+  } catch (err) {
+    console.error('[AfriCart] Init error:', err);
+    const notSupported = getEl('notSupportedCard');
+    if (notSupported) {
+      notSupported.style.display = 'block';
+      const desc = notSupported.querySelector('.info-description');
+      if (desc) desc.textContent = 'Something went wrong. Try refreshing the page or reopening the panel.';
+    }
+  }
+}
+
+// Setup all event listeners (defensive: only attach when element exists)
 function setupEventListeners() {
-  // Refresh button
-  document.getElementById('refreshBtn').addEventListener('click', () => {
-    loadProductInfo();
+  const on = (id, event, fn) => {
+    const el = getEl(id);
+    if (el && typeof fn === 'function') el.addEventListener(event, fn);
+  };
+
+  on('refreshBtn', 'click', () => loadProductInfo());
+  on('copyLinkBtn', 'click', () => copyProductLink());
+  on('settingsBtn', 'click', () => { try { chrome.runtime.openOptionsPage(); } catch (e) {} });
+  on('helpBtn', 'click', showHelp);
+  on('statsBtn', 'click', showStats);
+  on('wishlistBtn', 'click', () => toggleWishlist());
+  on('currencyConverterBtn', 'click', () => toggleCurrencyConverter());
+  on('priceHistoryBtn', 'click', () => togglePriceHistory());
+  on('addToCompareBtn', 'click', () => addToMultiCompare());
+
+  const closeHistory = getEl('closeHistoryBtn');
+  if (closeHistory) closeHistory.addEventListener('click', () => {
+    const section = getEl('priceHistorySection');
+    if (section) section.style.display = 'none';
   });
-  
-  // Copy link button
-  document.getElementById('copyLinkBtn').addEventListener('click', () => {
-    copyProductLink();
+  const closeConverter = getEl('closeConverterBtn');
+  if (closeConverter) closeConverter.addEventListener('click', () => {
+    const section = getEl('currencyConverterSection');
+    if (section) section.style.display = 'none';
   });
-  
-  // Settings button
-  document.getElementById('settingsBtn').addEventListener('click', () => {
-    chrome.runtime.openOptionsPage();
-  });
-  
-  // Footer links
-  document.getElementById('helpBtn').addEventListener('click', showHelp);
-  document.getElementById('statsBtn').addEventListener('click', showStats);
-  
-  // v1.5: Wishlist button
-  document.getElementById('wishlistBtn').addEventListener('click', () => {
-    toggleWishlist();
-  });
-  
-  // v1.5: Currency converter button
-  document.getElementById('currencyConverterBtn').addEventListener('click', () => {
-    toggleCurrencyConverter();
-  });
-  
-  // v1.5: Price history button
-  document.getElementById('priceHistoryBtn').addEventListener('click', () => {
-    togglePriceHistory();
-  });
-  
-  // v1.5: Close buttons
-  document.getElementById('closeHistoryBtn')?.addEventListener('click', () => {
-    document.getElementById('priceHistorySection').style.display = 'none';
-  });
-  
-  document.getElementById('closeConverterBtn')?.addEventListener('click', () => {
-    document.getElementById('currencyConverterSection').style.display = 'none';
-  });
-  
-  // v1.5: Currency converter inputs
-  const converterAmount = document.getElementById('converterAmount');
-  const converterFrom = document.getElementById('converterFrom');
-  const converterTo = document.getElementById('converterTo');
-  
+
+  const converterAmount = getEl('converterAmount');
+  const converterFrom = getEl('converterFrom');
+  const converterTo = getEl('converterTo');
   if (converterAmount && converterFrom && converterTo) {
     converterAmount.addEventListener('input', convertCurrency);
     converterFrom.addEventListener('change', convertCurrency);
     converterTo.addEventListener('change', convertCurrency);
   }
-  
-  // v1.5: Multi-product comparison
-  document.getElementById('addToCompareBtn')?.addEventListener('click', () => {
-    addToMultiCompare();
-  });
-  
-  // Load wishlist on init
+
   loadWishlist();
   loadMultiCompare();
 }
@@ -211,38 +239,43 @@ async function displayProductInfo(data) {
   const product = data.product;
   const store = data.currentStore;
   
-  // Update store badge
-  document.getElementById('storeFlag').textContent = store.flag;
-  document.getElementById('storeName').textContent = store.name;
+  // Update store badge (country code, no emoji)
+  const storeFlag = getEl('storeFlag');
+  const storeNameEl = getEl('storeName');
+  if (storeFlag) storeFlag.textContent = getCountryCode(store);
+  if (storeNameEl) storeNameEl.textContent = store.name || '';
   
   // Update product info
-  document.getElementById('productTitle').textContent = product.title || 'Product Title';
-  document.getElementById('productPrice').textContent = product.price || '--';
-  document.getElementById('productCurrency').textContent = product.currency || 'NGN';
-  
-  // v1.5: Show original price and discount if available
-  if (product.originalPrice && product.originalPrice !== product.price) {
-    const originalWrapper = document.getElementById('originalPriceWrapper');
-    const originalPriceEl = document.getElementById('productOriginalPrice');
-    const discountBadge = document.getElementById('discountBadge');
-    
-    originalPriceEl.textContent = `${product.currency} ${product.originalPrice}`;
-    if (product.discount) {
-      discountBadge.textContent = product.discount;
-    }
+  const productTitleEl = getEl('productTitle');
+  const productPriceEl = getEl('productPrice');
+  const productCurrencyEl = getEl('productCurrency');
+  if (productTitleEl) productTitleEl.textContent = product.title || 'Product Title';
+  if (productPriceEl) productPriceEl.textContent = product.price || '--';
+  if (productCurrencyEl) productCurrencyEl.textContent = product.currency || 'NGN';
+
+  const originalWrapper = getEl('originalPriceWrapper');
+  const originalPriceEl = getEl('productOriginalPrice');
+  const discountBadge = getEl('discountBadge');
+  if (product.originalPrice && product.originalPrice !== product.price && originalWrapper) {
+    if (originalPriceEl) originalPriceEl.textContent = `${product.currency || ''} ${product.originalPrice}`;
+    if (discountBadge && product.discount) discountBadge.textContent = product.discount;
     originalWrapper.style.display = 'flex';
-  } else {
-    document.getElementById('originalPriceWrapper').style.display = 'none';
+  } else if (originalWrapper) {
+    originalWrapper.style.display = 'none';
   }
   
-  // Update product image
-  if (product.image) {
-    const img = document.getElementById('productImage');
+  // Update product image only (main product image – nothing else)
+  const img = getEl('productImage');
+  if (!img) return;
+  if (product.image && /^https?:\/\//i.test(product.image)) {
     img.src = product.image;
+    img.alt = product.title ? String(product.title).substring(0, 100) : 'Product';
     img.style.display = 'block';
-    img.onerror = () => {
-      img.style.display = 'none';
-    };
+    img.onerror = () => { img.style.display = 'none'; };
+  } else {
+    img.removeAttribute('src');
+    img.alt = 'No product image';
+    img.style.display = 'none';
   }
   
   // Advanced: Display price trend (CamelCamelCamel logic)
@@ -267,29 +300,34 @@ async function displayProductInfo(data) {
   // v1.5: Calculate and display shipping
   await calculateShipping(product, store);
   
-  // Show product card
-  document.getElementById('productCard').style.display = 'block';
-  document.getElementById('notSupportedCard').style.display = 'none';
-  document.getElementById('comparisonSection').style.display = 'block';
+  const productCard = getEl('productCard');
+  const notSupported = getEl('notSupportedCard');
+  const comparisonSection = getEl('comparisonSection');
+  if (productCard) productCard.style.display = 'block';
+  if (notSupported) notSupported.style.display = 'none';
+  if (comparisonSection) comparisonSection.style.display = 'block';
   
   // Display comparison stores with recommendations
   await displayComparisonStores(data);
 }
 
-// Display comparison stores - SIMPLIFIED & LOCATION-FOCUSED
+// Display comparison stores - same product niche, with best price suggestion
 async function displayComparisonStores(data) {
   const grid = document.getElementById('comparisonGrid');
+  const bestPriceEl = document.getElementById('bestPriceSuggestion');
   grid.innerHTML = '';
-  
+  if (bestPriceEl) bestPriceEl.innerHTML = '';
+
   if (!data.comparisonStores || data.comparisonStores.length === 0) {
-    grid.innerHTML = '<p class="no-stores">No other stores available</p>';
+    const msg = typeof t === 'function' ? t('noStores') : 'No other stores available';
+    grid.innerHTML = `<p class="no-stores">${msg}</p>`;
     return;
   }
-  
+
   const userLocation = data.userLocation || {};
   const currentStore = data.currentStore;
-  
-  // Remove duplicates
+  const product = data.product || {};
+
   const uniqueStores = [];
   const seenDomains = new Set();
   data.comparisonStores.forEach(store => {
@@ -298,80 +336,108 @@ async function displayComparisonStores(data) {
       uniqueStores.push(store);
     }
   });
-  
-  // Separate: LOCAL stores (same country) vs OTHERS
+
+  // Best price suggestion – same product comparison
+  const currentPrice = (window.parsePrice || parsePriceUtil)(product.price);
+  if (currentPrice && currentPrice > 0 && uniqueStores.length > 0 && bestPriceEl) {
+    const bestDeal = await calculateBestDeal(uniqueStores, currentPrice, product, userLocation);
+    if (bestDeal && bestDeal.store) {
+      const card = createRecommendationCard(bestDeal, product.title || '');
+      bestPriceEl.appendChild(card);
+    }
+  }
+
   const localStores = [];
+  const globalStores = [];
   const otherStores = [];
-  
   uniqueStores.forEach(store => {
     if (userLocation.country && store.country === userLocation.country) {
       localStores.push(store);
+    } else if (store.region === 'Global') {
+      globalStores.push(store);
     } else {
       otherStores.push(store);
     }
   });
-  
-  // Show LOCAL stores first (prominent)
+
+  const storesLabel = typeof t === 'function' ? t('stores') : 'stores';
+  const storesInLabel = typeof t === 'function' ? t('storesIn') : 'Stores in';
+  const worldwideLabel = typeof t === 'function' ? t('worldwideStores') : 'Worldwide';
+  const otherCountriesLabel = typeof t === 'function' ? t('otherCountries') : 'Other Countries';
+  const viewMoreLabel = typeof t === 'function' ? t('viewMoreStores') : 'View more stores';
+
   if (localStores.length > 0 && userLocation.country) {
     const localHeader = document.createElement('div');
     localHeader.className = 'local-stores-header';
     localHeader.innerHTML = `
-      <span class="local-flag">${localStores[0].flag}</span>
-      <span class="local-title">Stores in ${userLocation.country}</span>
-      <span class="local-badge">${localStores.length} store${localStores.length > 1 ? 's' : ''}</span>
+      <span class="local-flag store-country-code-simple">${getCountryCode(localStores[0])}</span>
+      <span class="local-title">${storesInLabel} ${userLocation.country}</span>
+      <span class="local-badge">${localStores.length} ${storesLabel}</span>
     `;
     grid.appendChild(localHeader);
-    
     localStores.forEach(store => {
       const button = createStoreButtonSimple(store, data.product.title);
       button.classList.add('local-store-button');
       grid.appendChild(button);
     });
   }
+
+  if (globalStores.length > 0) {
+    const worldHeader = document.createElement('div');
+    worldHeader.className = 'other-stores-header worldwide-header';
+    worldHeader.innerHTML = `
+      <span class="other-title">${worldwideLabel}</span>
+      <span class="other-count">${globalStores.length} ${storesLabel}</span>
+    `;
+    grid.appendChild(worldHeader);
+    globalStores.slice(0, 6).forEach(store => {
+      grid.appendChild(createStoreButtonSimple(store, data.product.title));
+    });
+    if (globalStores.length > 6) {
+      const viewMoreBtn = document.createElement('button');
+      viewMoreBtn.className = 'view-more-btn';
+      viewMoreBtn.textContent = `${viewMoreLabel} (${globalStores.length - 6})`;
+      viewMoreBtn.onclick = () => {
+        viewMoreBtn.remove();
+        globalStores.slice(6).forEach(store => {
+          grid.appendChild(createStoreButtonSimple(store, data.product.title));
+        });
+      };
+      grid.appendChild(viewMoreBtn);
+    }
+  }
   
-  // Show other countries (collapsed by default, can expand)
   if (otherStores.length > 0) {
     const otherHeader = document.createElement('div');
     otherHeader.className = 'other-stores-header';
     otherHeader.innerHTML = `
-      <span class="other-title">Other Countries</span>
-      <span class="other-count">${otherStores.length} stores</span>
+      <span class="other-title">${otherCountriesLabel}</span>
+      <span class="other-count">${otherStores.length} ${storesLabel}</span>
     `;
     grid.appendChild(otherHeader);
-    
-    // Group by country
     const storesByCountry = {};
     otherStores.forEach(store => {
-      if (!storesByCountry[store.country]) {
-        storesByCountry[store.country] = [];
-      }
+      if (!storesByCountry[store.country]) storesByCountry[store.country] = [];
       storesByCountry[store.country].push(store);
     });
-    
-    // Show max 3 stores from other countries (to reduce scrolling)
     let shownCount = 0;
     Object.entries(storesByCountry).forEach(([country, stores]) => {
       if (shownCount >= 3) return;
-      
       stores.slice(0, 2).forEach(store => {
         if (shownCount < 3) {
-          const button = createStoreButtonSimple(store, data.product.title);
-          grid.appendChild(button);
+          grid.appendChild(createStoreButtonSimple(store, data.product.title));
           shownCount++;
         }
       });
     });
-    
     if (otherStores.length > 3) {
       const viewMoreBtn = document.createElement('button');
       viewMoreBtn.className = 'view-more-btn';
-      viewMoreBtn.textContent = `View ${otherStores.length - 3} more stores`;
+      viewMoreBtn.textContent = `${viewMoreLabel} (${otherStores.length - 3})`;
       viewMoreBtn.onclick = () => {
-        // Expand to show all
         viewMoreBtn.remove();
         otherStores.slice(3).forEach(store => {
-          const button = createStoreButtonSimple(store, data.product.title);
-          grid.appendChild(button);
+          grid.appendChild(createStoreButtonSimple(store, data.product.title));
         });
       };
       grid.appendChild(viewMoreBtn);
@@ -384,7 +450,7 @@ function createStoreButtonSimple(store, productTitle) {
   const button = document.createElement('button');
   button.className = 'store-button-simple';
   button.innerHTML = `
-    <span class="store-flag-simple">${store.flag}</span>
+    <span class="store-flag-simple store-country-code-simple">${getCountryCode(store)}</span>
     <span class="store-name-simple">${store.name}</span>
     <svg class="store-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
       <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -500,50 +566,49 @@ async function calculateBestDeal(stores, currentPrice, product, userLocation = {
   return null;
 }
 
-// Create recommendation card
+// Create recommendation card (best price suggestion – same product)
 function createRecommendationCard(bestDeal, productTitle) {
+  const safeTitle = String(productTitle || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').substring(0, 200);
   const card = document.createElement('div');
   card.className = 'best-deal-card';
+  card.setAttribute('aria-label', 'Best price suggestion for this product');
   card.innerHTML = `
     <div class="best-deal-badge">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
         <path d="M10 2L12.09 7.26L18 8.27L14 12.14L14.91 18.02L10 15.77L5.09 18.02L6 12.14L2 8.27L7.91 7.26L10 2Z" fill="currentColor"/>
       </svg>
-      <span>BEST DEAL</span>
+      <span>BEST PRICE SUGGESTION</span>
     </div>
     <div class="best-deal-content">
       <div class="best-deal-store">
-        <span class="best-deal-flag">${bestDeal.store.flag}</span>
+        <span class="best-deal-flag store-country-code-simple">${getCountryCode(bestDeal.store)}</span>
         <div class="best-deal-info">
           <h4 class="best-deal-name">${bestDeal.store.name}</h4>
           <div class="best-deal-rating">
-            <span class="rating-stars">${'⭐'.repeat(Math.floor(bestDeal.rating))}</span>
+            <span class="rating-stars" aria-label="${bestDeal.rating.toFixed(1)} stars">${bestDeal.rating.toFixed(1)}</span>
             <span class="rating-value">${bestDeal.rating.toFixed(1)}</span>
           </div>
         </div>
       </div>
       <div class="best-deal-price">
-        <div class="best-deal-estimated">Est. ${bestDeal.store.currency} ${bestDeal.estimatedPrice.toFixed(2)}</div>
-        <div class="best-deal-savings">Save ${bestDeal.savingsPercent}%</div>
+        <div class="best-deal-estimated">Est. ${bestDeal.store.currency} ${(bestDeal.estimatedPrice || 0).toFixed(2)}</div>
+        <div class="best-deal-savings">Save ~${bestDeal.savingsPercent || 0}%</div>
       </div>
-      <button class="best-deal-button" data-store='${JSON.stringify(bestDeal.store)}' data-title="${productTitle}">
-        Shop on ${bestDeal.store.name}
+      <button type="button" class="best-deal-button" data-title="${safeTitle}">
+        Check price on ${bestDeal.store.name}
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
           <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
       <div class="best-deal-reason">
-        <span class="reason-icon">💡</span>
-        <span>Cheapest price + High ratings = Best value!</span>
+        <span class="reason-text">Same product – often best value in this category</span>
       </div>
     </div>
   `;
-  
-  // Add click handler
-  card.querySelector('.best-deal-button').addEventListener('click', () => {
-    openStoreSearch(bestDeal.store, productTitle);
-  });
-  
+
+  const btn = card.querySelector('.best-deal-button');
+  if (btn) btn.addEventListener('click', () => openStoreSearch(bestDeal.store, productTitle || ''));
+
   return card;
 }
 
@@ -554,9 +619,9 @@ function createStoreButton(store, productTitle, bestDeal) {
   button.className = `store-button ${isBestDeal ? 'best-deal-highlight' : ''}`;
   button.innerHTML = `
     <div class="store-button-content">
-      <span class="store-button-flag">${store.flag}</span>
+      <span class="store-button-flag store-country-code-simple">${getCountryCode(store)}</span>
       <div class="store-button-info">
-        <span class="store-button-name">${store.name}${isBestDeal ? ' ⭐' : ''}</span>
+        <span class="store-button-name">${store.name}${isBestDeal ? ' • Best' : ''}</span>
         <span class="store-button-country">${store.country}</span>
       </div>
       <svg class="store-button-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -625,7 +690,8 @@ async function copyProductLink() {
   
   try {
     await navigator.clipboard.writeText(productUrl);
-    const btn = document.getElementById('copyLinkBtn');
+    const btn = getEl('copyLinkBtn');
+    if (!btn) return;
     const original = btn.innerHTML;
     btn.innerHTML = '<svg class="btn-icon" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M6 8L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Copied!</span>';
     setTimeout(() => {
@@ -638,44 +704,47 @@ async function copyProductLink() {
 
 // Show not supported message
 function showNotSupported(message) {
-  document.getElementById('productCard').style.display = 'none';
-  document.getElementById('comparisonSection').style.display = 'none';
-  document.getElementById('notSupportedCard').style.display = 'block';
-  
-  const infoCard = document.getElementById('notSupportedCard');
-  const infoContent = infoCard.querySelector('.info-content p');
-  if (infoContent && message !== 'Product information not available') {
-    infoContent.textContent = message;
+  const productCard = getEl('productCard');
+  const comparison = getEl('comparisonSection');
+  const notSupported = getEl('notSupportedCard');
+  if (productCard) productCard.style.display = 'none';
+  if (comparison) comparison.style.display = 'none';
+  if (notSupported) {
+    notSupported.style.display = 'block';
+    const infoContent = notSupported.querySelector('.info-content p');
+    if (infoContent && message && message !== 'Product information not available') {
+      infoContent.textContent = message;
+    }
   }
 }
 
 // Show loading indicator
 function showLoading() {
-  document.getElementById('loadingIndicator').style.display = 'block';
-  document.getElementById('productCard').style.display = 'none';
-  document.getElementById('comparisonSection').style.display = 'none';
-  document.getElementById('notSupportedCard').style.display = 'none';
+  const loading = getEl('loadingIndicator');
+  const productCard = getEl('productCard');
+  const comparison = getEl('comparisonSection');
+  const notSupported = getEl('notSupportedCard');
+  if (loading) loading.style.display = 'block';
+  if (productCard) productCard.style.display = 'none';
+  if (comparison) comparison.style.display = 'none';
+  if (notSupported) notSupported.style.display = 'none';
 }
 
 // Hide loading indicator
 function hideLoading() {
-  document.getElementById('loadingIndicator').style.display = 'none';
+  const loading = getEl('loadingIndicator');
+  if (loading) loading.style.display = 'none';
 }
 
 // Show help
 function showHelp() {
   alert('AfriCart Help\n\n' +
-    '• Navigate to a product page on a supported African e-commerce site\n' +
-    '• Click any store button to compare prices\n' +
-    '• Results open in new tabs for easy comparison\n' +
-    '• Use "Copy Link" to share the current product\n' +
-    '• Configure settings for affiliate links and preferences\n\n' +
-    'Supported Countries:\n' +
-    '🇳🇬 Nigeria: Jumia, Konga\n' +
-    '🇿🇦 South Africa: Takealot, Zando, Amazon SA\n' +
-    '🇰🇪 Kenya: Jumia, Kilimall, Copia\n' +
-    '🇪🇬 Egypt: Jumia, Amazon EG, Noon\n\n' +
-    'Keyboard Shortcut: Ctrl+Shift+A (Cmd+Shift+A on Mac)');
+    '• Open a product page on a supported e-commerce site (e.g. Kilimall, Jumia, Konga)\n' +
+    '• Open AfriCart from the toolbar or press Ctrl+Shift+A\n' +
+    '• Click any store button to search the same product on that store (new tab)\n' +
+    '• Use Copy Link to share; Refresh to re-read the page\n\n' +
+    'Supported: NG Jumia, Konga, Slot · ZA Takealot, Zando · KE Jumia, Kilimall · EG Jumia, Noon\n\n' +
+    'Shortcut: Ctrl+Shift+A (Cmd+Shift+A on Mac)');
 }
 
 // Show stats
@@ -898,30 +967,30 @@ function toggleCurrencyConverter() {
 }
 
 function initializeCurrencyConverter() {
-  const currencies = ['NGN', 'ZAR', 'KES', 'EGP', 'USD'];
   const fromSelect = document.getElementById('converterFrom');
   const toSelect = document.getElementById('converterTo');
   const amountInput = document.getElementById('converterAmount');
-  
-  // Populate currency selects
+  if (!fromSelect || !toSelect || !amountInput) return;
+
+  const currencies = ['NGN', 'ZAR', 'KES', 'EGP', 'USD'];
+  fromSelect.innerHTML = '';
+  toSelect.innerHTML = '';
+
   currencies.forEach(currency => {
     const option1 = document.createElement('option');
     option1.value = currency;
     option1.textContent = currency;
     fromSelect.appendChild(option1);
-    
     const option2 = document.createElement('option');
     option2.value = currency;
     option2.textContent = currency;
     toSelect.appendChild(option2);
   });
-  
-  // Set current product currency as default
+
   if (currentProductData && currentProductData.product) {
     const currentCurrency = currentProductData.product.currency || 'NGN';
     fromSelect.value = currentCurrency;
     toSelect.value = currentCurrency === 'NGN' ? 'USD' : 'NGN';
-    
     const currentPrice = parsePrice(currentProductData.product.price);
     if (currentPrice) {
       amountInput.value = currentPrice;
@@ -931,17 +1000,21 @@ function initializeCurrencyConverter() {
 }
 
 function convertCurrency() {
-  const amount = parseFloat(document.getElementById('converterAmount').value);
-  const from = document.getElementById('converterFrom').value;
-  const to = document.getElementById('converterTo').value;
+  const amountEl = document.getElementById('converterAmount');
+  const fromEl = document.getElementById('converterFrom');
+  const toEl = document.getElementById('converterTo');
   const resultInput = document.getElementById('converterResult');
-  
+  if (!amountEl || !fromEl || !toEl || !resultInput) return;
+
+  const amount = parseFloat(amountEl.value);
+  const from = fromEl.value;
+  const to = toEl.value;
+
   if (!amount || isNaN(amount)) {
     resultInput.value = '';
     return;
   }
-  
-  // Use convertCurrency from utils.js (global scope)
+
   const converted = window.convertCurrency ? window.convertCurrency(amount, from, to) : convertCurrencyUtil(amount, from, to);
   if (converted !== null) {
     const formatted = window.formatPrice ? window.formatPrice(converted, to) : formatPriceUtil(converted, to);
@@ -1061,11 +1134,11 @@ function displayCountrySwitcher(stores, productTitle, userLocation) {
       countryCard.classList.add('current-country');
     }
     
-    const flag = countryStores[0].flag;
+    const flagCode = getCountryCode(countryStores[0]);
     const storeCount = countryStores.length;
     
     countryCard.innerHTML = `
-      <div class="country-card-flag">${flag}</div>
+      <div class="country-card-flag store-country-code-simple">${flagCode}</div>
       <div class="country-card-info">
         <div class="country-card-name">${country}</div>
         <div class="country-card-stores">${storeCount} store${storeCount > 1 ? 's' : ''}</div>
@@ -1098,7 +1171,7 @@ async function switchCountry(country, stores, productTitle) {
   const countryHeader = document.createElement('div');
   countryHeader.className = 'country-header';
   countryHeader.innerHTML = `
-    <span class="country-flag">${stores[0].flag}</span>
+    <span class="country-flag store-country-code-simple">${getCountryCode(stores[0])}</span>
     <span class="country-name">${country} - ${productTitle.substring(0, 30)}...</span>
   `;
   
@@ -1166,15 +1239,15 @@ async function calculateShipping(product, store) {
   results.innerHTML = `
     <div class="shipping-item">
       <span class="shipping-label">Product Price:</span>
-      <span class="shipping-value">${formatPrice(parsedPrice, product.currency)}</span>
+      <span class="shipping-value">${(window.formatPrice || formatPriceUtil)(parsedPrice, product.currency)}</span>
     </div>
     <div class="shipping-item">
       <span class="shipping-label">Estimated Shipping:</span>
-      <span class="shipping-value">${formatPrice(shipping, product.currency)}</span>
+      <span class="shipping-value">${(window.formatPrice || formatPriceUtil)(shipping, product.currency)}</span>
     </div>
     <div class="shipping-item total">
       <span class="shipping-label">Total Cost:</span>
-      <span class="shipping-value">${formatPrice(total, product.currency)}</span>
+      <span class="shipping-value">${(window.formatPrice || formatPriceUtil)(total, product.currency)}</span>
     </div>
   `;
   

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "AfriCart - African Price Hopper",
   "version": "1.5.0",
-  "description": "Compare prices across African e-commerce platforms. Features: Price history, alerts, wishlist, multi-product comparison, currency conversion, shipping calculator, and review aggregation.",
+  "description": "Compare prices across African e-commerce. Wishlist, price history, alerts, currency conversion and best price suggestions.",
   "permissions": [
     "storage",
     "tabs",
@@ -173,7 +173,18 @@
   },
   "options_page": "options.html",
   "action": {
-    "default_title": "Open AfriCart"
+    "default_title": "Open AfriCart",
+    "default_icon": {
+      "16": "trolley.png",
+      "32": "trolley.png",
+      "48": "trolley.png"
+    }
+  },
+  "icons": {
+    "16": "trolley.png",
+    "32": "trolley.png",
+    "48": "trolley.png",
+    "128": "trolley.png"
   },
   "commands": {
     "toggle-sidepanel": {
